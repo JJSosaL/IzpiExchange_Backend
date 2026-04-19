@@ -6,7 +6,7 @@ const SIGN_UP_PASSWORD_MAX_LENGTH = 20;
 const SIGN_UP_PASSWORD_MIN_LENGTH = 8;
 
 /**
- * Verifica que el correo electrónico proviene de un dominio válido.
+ * Verifica que el correo electrónico proviene de un dominio permitido.
  */
 const validateEmailDomain = (emailString: string): boolean => {
 	const emailStringData = email.parseOneAddress(emailString) as ParsedMailbox;
