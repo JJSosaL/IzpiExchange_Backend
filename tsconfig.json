@@ -22,6 +22,9 @@
 			"#prisma/*": [
 				"./src/prisma/*"
 			],
+			"#utils/*": [
+				"./src/utils/*"
+			],
 			"#zod/*": [
 				"./src/zod/*"
 			]

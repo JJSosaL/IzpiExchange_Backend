@@ -12,6 +12,7 @@
 		"@prisma-next/mongo-runtime": "0.3.0",
 		"dayjs": "1.11.20",
 		"dotenv": "17.4.2",
+		"email-addresses": "5.0.0",
 		"handlebars": "4.7.9",
 		"nodemailer": "8.0.5",
 		"zod": "4.3.6"
@@ -31,6 +32,7 @@
 		"#common/*": "./dist/src/common/*",
 		"#modules/*": "./dist/src/modules/*",
 		"#prisma/*": "./dist/src/prisma/*",
+		"#utils/*": "./dist/src/utils/*",
 		"#zod/*": "./dist/src/zod/*"
 	},
 	"license": "CC-BY-SA-4.0",
