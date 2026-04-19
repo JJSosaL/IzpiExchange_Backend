@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { EmailModule } from '#modules/email/Email.module.js';
+import { EmailModule } from '#modules/Email/Email.module.js';
 import { AuthController } from './Auth.controller.js';
 import { AuthService } from './Auth.service.js';
 
