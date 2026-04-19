@@ -1,8 +1,6 @@
 import email, { type ParsedMailbox } from 'email-addresses';
 import { z } from 'zod';
-import { getEnvironmentVariable } from '#utils/Process/getEnvironmentVariable.js';
-
-const VALID_EMAIL_DOMAIN = getEnvironmentVariable('VALID_EMAIL_DOMAIN');
+import { ALLOWED_EMAIL_DOMAIN } from '#root/config.js';
 
 const SIGN_UP_PASSWORD_MAX_LENGTH = 20;
 const SIGN_UP_PASSWORD_MIN_LENGTH = 8;
@@ -14,7 +12,7 @@ const validateEmailDomain = (emailString: string): boolean => {
 	const emailStringData = email.parseOneAddress(emailString) as ParsedMailbox;
 	const { domain } = emailStringData;
 
-	return domain === VALID_EMAIL_DOMAIN;
+	return domain === ALLOWED_EMAIL_DOMAIN;
 };
 
 export const SignUpSchema = z.object({

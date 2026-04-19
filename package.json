@@ -32,6 +32,7 @@
 		"#common/*": "./dist/src/common/*",
 		"#modules/*": "./dist/src/modules/*",
 		"#prisma/*": "./dist/src/prisma/*",
+		"#root/*": "./dist/src/*",
 		"#utils/*": "./dist/src/utils/*",
 		"#zod/*": "./dist/src/zod/*"
 	},

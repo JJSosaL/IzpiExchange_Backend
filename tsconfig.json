@@ -22,6 +22,9 @@
 			"#prisma/*": [
 				"./src/prisma/*"
 			],
+			"#root/*": [
+				"./src/*"
+			],
 			"#utils/*": [
 				"./src/utils/*"
 			],
