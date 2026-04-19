@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable, type PipeTransform } from '@nestjs/common';
-import type z from 'zod';
+import type { ZodType } from 'zod';
 
 @Injectable()
 export class ZodValidationPipe implements PipeTransform {
-	private readonly zodSchema: z.ZodType;
+	private readonly zodSchema: ZodType;
 
-	public constructor(zodSchema: z.ZodType) {
+	public constructor(zodSchema: ZodType) {
 		this.zodSchema = zodSchema;
 	}
 
