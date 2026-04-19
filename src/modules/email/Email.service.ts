@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { cwd } from 'node:process';
 import { Injectable } from '@nestjs/common';
+import Handlebars from 'handlebars';
 import { createTransport, type Transporter } from 'nodemailer';
 import {
 	EMAIL_HOST_NAME,
