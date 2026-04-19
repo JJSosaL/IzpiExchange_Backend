@@ -1,0 +1,44 @@
+{
+	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
+		"declaration": false,
+		"emitDeclarationOnly": false,
+		"emitDecoratorMetadata": true,
+		"esModuleInterop": true,
+		"experimentalDecorators": true,
+		"forceConsistentCasingInFileNames": true,
+		"incremental": false,
+		"isolatedModules": true,
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"outDir": "dist",
+		"paths": {
+			"#common/*": [
+				"./src/common/*"
+			],
+			"#modules/*": [
+				"./src/modules/*"
+			],
+			"#prisma/*": [
+				"./src/prisma/*"
+			],
+			"#zod/*": [
+				"./src/zod/*"
+			]
+		},
+		"resolveJsonModule": true,
+		"rootDir": ".",
+		"skipDefaultLibCheck": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"strictNullChecks": true,
+		"target": "esnext",
+		"types": [
+			"node"
+		]
+	},
+	"include": [
+		"src/**/*.ts",
+		"prisma-next.config.ts"
+	]
+}
