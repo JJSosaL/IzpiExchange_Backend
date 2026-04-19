@@ -53,15 +53,14 @@ export class EmailService {
 		const handlebarsTemplatePath = join(cwd(), 'templates', 'OneTimePasswordMessage.html');
 		const handlebarsTemplateContent = readFileSync(handlebarsTemplatePath, 'utf-8');
 
-		const handlebarsTemplate = Handlebars.compile(handlebarsTemplateContent);
-		const handlebarsFinalTemplate = handlebarsTemplate({
+		const handlebarsTemplate = Handlebars.compile(handlebarsTemplateContent)({
 			otpCode,
 		});
 
 		await this.nodeMailer.sendMail({
 			encoding: 'utf-8',
 			from: `"IzpiExchange" <${EmailService.EMAIL_USER_NAME}>`,
-			html: handlebarsFinalTemplate,
+			html: handlebarsTemplate,
 			priority: 'normal',
 			subject: '✅ Código de Verificación - IzpiExchange',
 			to: recipient,
