@@ -1,0 +1,44 @@
+model Account {
+    createdAt DateTime @default(now())
+    email     String
+    id        String   @id @unique
+    password  String
+    updatedAt DateTime @updatedAt
+    user      User?
+
+    @@map("accounts")
+}
+
+model PendingAccountVerification {
+    createdAt DateTime @default(now())
+    email     String
+    expiresIn DateTime
+    otp       String   @id @unique
+    password  String
+    updatedAt DateTime @updatedAt
+}
+
+model Product {
+    createdAt DateTime @default(now())
+    details   String
+    expiresAt DateTime
+    id        String   @id @unique
+    name      String
+    price     Int
+    updatedAt DateTime @updatedAt
+
+    @@map("products")
+}
+
+model User {
+    account   Account  @relation(fields: [accountId], references: [id])
+    accountId String   @id @unique
+    createdAt DateTime @default(now())
+    credits   Int      @default(100)
+    isTeacher Boolean @default(false)
+    role      String
+    updatedAt DateTime @updatedAt
+    username  String
+
+    @@map("users")
+}

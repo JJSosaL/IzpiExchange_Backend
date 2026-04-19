@@ -1,0 +1,456 @@
+{
+  "schemaVersion": "1",
+  "targetFamily": "mongo",
+  "target": "mongo",
+  "profileHash": "sha256:840de65fba7eb950a31487f74ee420b9c21205f38bce58579026747e0264e840",
+  "roots": {
+    "accounts": "Account",
+    "pendingAccountVerification": "PendingAccountVerification",
+    "products": "Product",
+    "users": "User"
+  },
+  "models": {
+    "Account": {
+      "fields": {
+        "createdAt": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/date@1",
+            "kind": "scalar"
+          }
+        },
+        "email": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/string@1",
+            "kind": "scalar"
+          }
+        },
+        "id": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/string@1",
+            "kind": "scalar"
+          }
+        },
+        "password": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/string@1",
+            "kind": "scalar"
+          }
+        },
+        "updatedAt": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/date@1",
+            "kind": "scalar"
+          }
+        }
+      },
+      "relations": {
+        "user": {
+          "cardinality": "1:1",
+          "on": {
+            "localFields": [
+              "id"
+            ],
+            "targetFields": [
+              "accountId"
+            ]
+          },
+          "to": "User"
+        }
+      },
+      "storage": {
+        "collection": "accounts"
+      }
+    },
+    "PendingAccountVerification": {
+      "fields": {
+        "createdAt": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/date@1",
+            "kind": "scalar"
+          }
+        },
+        "email": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/string@1",
+            "kind": "scalar"
+          }
+        },
+        "expiresIn": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/date@1",
+            "kind": "scalar"
+          }
+        },
+        "otp": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/string@1",
+            "kind": "scalar"
+          }
+        },
+        "password": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/string@1",
+            "kind": "scalar"
+          }
+        },
+        "updatedAt": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/date@1",
+            "kind": "scalar"
+          }
+        }
+      },
+      "relations": {},
+      "storage": {
+        "collection": "pendingAccountVerification"
+      }
+    },
+    "Product": {
+      "fields": {
+        "createdAt": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/date@1",
+            "kind": "scalar"
+          }
+        },
+        "details": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/string@1",
+            "kind": "scalar"
+          }
+        },
+        "expiresAt": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/date@1",
+            "kind": "scalar"
+          }
+        },
+        "id": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/string@1",
+            "kind": "scalar"
+          }
+        },
+        "name": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/string@1",
+            "kind": "scalar"
+          }
+        },
+        "price": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/int32@1",
+            "kind": "scalar"
+          }
+        },
+        "updatedAt": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/date@1",
+            "kind": "scalar"
+          }
+        }
+      },
+      "relations": {},
+      "storage": {
+        "collection": "products"
+      }
+    },
+    "User": {
+      "fields": {
+        "accountId": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/string@1",
+            "kind": "scalar"
+          }
+        },
+        "createdAt": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/date@1",
+            "kind": "scalar"
+          }
+        },
+        "credits": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/int32@1",
+            "kind": "scalar"
+          }
+        },
+        "isTeacher": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/bool@1",
+            "kind": "scalar"
+          }
+        },
+        "role": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/string@1",
+            "kind": "scalar"
+          }
+        },
+        "updatedAt": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/date@1",
+            "kind": "scalar"
+          }
+        },
+        "username": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/string@1",
+            "kind": "scalar"
+          }
+        }
+      },
+      "relations": {
+        "account": {
+          "cardinality": "N:1",
+          "on": {
+            "localFields": [
+              "accountId"
+            ],
+            "targetFields": [
+              "id"
+            ]
+          },
+          "to": "Account"
+        }
+      },
+      "storage": {
+        "collection": "users"
+      }
+    }
+  },
+  "storage": {
+    "collections": {
+      "accounts": {
+        "indexes": [
+          {
+            "keys": [
+              {
+                "direction": 1,
+                "field": "id"
+              }
+            ],
+            "unique": true
+          }
+        ],
+        "validator": {
+          "jsonSchema": {
+            "bsonType": "object",
+            "properties": {
+              "createdAt": {
+                "bsonType": "date"
+              },
+              "email": {
+                "bsonType": "string"
+              },
+              "id": {
+                "bsonType": "string"
+              },
+              "password": {
+                "bsonType": "string"
+              },
+              "updatedAt": {
+                "bsonType": "date"
+              }
+            },
+            "required": [
+              "createdAt",
+              "email",
+              "id",
+              "password",
+              "updatedAt"
+            ]
+          },
+          "validationAction": "error",
+          "validationLevel": "strict"
+        }
+      },
+      "pendingAccountVerification": {
+        "indexes": [
+          {
+            "keys": [
+              {
+                "direction": 1,
+                "field": "otp"
+              }
+            ],
+            "unique": true
+          }
+        ],
+        "validator": {
+          "jsonSchema": {
+            "bsonType": "object",
+            "properties": {
+              "createdAt": {
+                "bsonType": "date"
+              },
+              "email": {
+                "bsonType": "string"
+              },
+              "expiresIn": {
+                "bsonType": "date"
+              },
+              "otp": {
+                "bsonType": "string"
+              },
+              "password": {
+                "bsonType": "string"
+              },
+              "updatedAt": {
+                "bsonType": "date"
+              }
+            },
+            "required": [
+              "createdAt",
+              "email",
+              "expiresIn",
+              "otp",
+              "password",
+              "updatedAt"
+            ]
+          },
+          "validationAction": "error",
+          "validationLevel": "strict"
+        }
+      },
+      "products": {
+        "indexes": [
+          {
+            "keys": [
+              {
+                "direction": 1,
+                "field": "id"
+              }
+            ],
+            "unique": true
+          }
+        ],
+        "validator": {
+          "jsonSchema": {
+            "bsonType": "object",
+            "properties": {
+              "createdAt": {
+                "bsonType": "date"
+              },
+              "details": {
+                "bsonType": "string"
+              },
+              "expiresAt": {
+                "bsonType": "date"
+              },
+              "id": {
+                "bsonType": "string"
+              },
+              "name": {
+                "bsonType": "string"
+              },
+              "price": {
+                "bsonType": "int"
+              },
+              "updatedAt": {
+                "bsonType": "date"
+              }
+            },
+            "required": [
+              "createdAt",
+              "details",
+              "expiresAt",
+              "id",
+              "name",
+              "price",
+              "updatedAt"
+            ]
+          },
+          "validationAction": "error",
+          "validationLevel": "strict"
+        }
+      },
+      "users": {
+        "indexes": [
+          {
+            "keys": [
+              {
+                "direction": 1,
+                "field": "accountId"
+              }
+            ],
+            "unique": true
+          }
+        ],
+        "validator": {
+          "jsonSchema": {
+            "bsonType": "object",
+            "properties": {
+              "accountId": {
+                "bsonType": "string"
+              },
+              "createdAt": {
+                "bsonType": "date"
+              },
+              "credits": {
+                "bsonType": "int"
+              },
+              "isTeacher": {
+                "bsonType": "bool"
+              },
+              "role": {
+                "bsonType": "string"
+              },
+              "updatedAt": {
+                "bsonType": "date"
+              },
+              "username": {
+                "bsonType": "string"
+              }
+            },
+            "required": [
+              "accountId",
+              "createdAt",
+              "credits",
+              "isTeacher",
+              "role",
+              "updatedAt",
+              "username"
+            ]
+          },
+          "validationAction": "error",
+          "validationLevel": "strict"
+        }
+      }
+    },
+    "storageHash": "sha256:48c0e548b92d2e420a6efb5a50949eefd4377e5d45df38b4037f6e257b83c719"
+  },
+  "capabilities": {},
+  "extensionPacks": {},
+  "meta": {},
+  "_generated": {
+    "warning": "⚠️  GENERATED FILE - DO NOT EDIT",
+    "message": "This file is automatically generated by \"prisma-next contract emit\".",
+    "regenerate": "To regenerate, run: prisma-next contract emit"
+  }
+}
