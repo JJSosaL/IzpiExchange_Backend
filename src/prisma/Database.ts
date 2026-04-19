@@ -7,7 +7,7 @@ import { MONGO_DB_CONNECTION_URL, MONGO_DB_DATABASE_NAME } from '#root/config.js
 import type { Contract } from '../contract.d.ts';
 /*
  * biome-ignore lint/correctness/useImportExtensions: Esta importación debe
- * tener una extensión explícita '.json'.
+ * ser explícitamente '.json'.
  */
 import ContractJson from '../contract.json' with { type: 'json' };
 
