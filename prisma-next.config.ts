@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import MongoAdapter from '@prisma-next/adapter-mongo/control';
 import { defineConfig } from '@prisma-next/cli/config-types';
 import MongoDriver from '@prisma-next/driver-mongo/control';

@@ -14,7 +14,9 @@
 	"files": {
 		"includes": [
 			"**",
-			"!!**/dist"
+			"!!**/dist",
+			"!!**/src/contract.d.ts",
+			"!!**/src/contract.json"
 		]
 	},
 	"formatter": {
@@ -26,8 +28,12 @@
 		"lineWidth": 100
 	},
 	"html": {
+		"experimentalFullSupportEnabled": true,
 		"formatter": {
 			"enabled": true
+		},
+		"parser": {
+			"interpolation": true
 		}
 	},
 	"javascript": {
