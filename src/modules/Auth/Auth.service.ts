@@ -1,6 +1,6 @@
 import { randomInt } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
-import type { ParsedMailbox } from 'email-addresses';
+import emailAddresses, { type ParsedMailbox } from 'email-addresses';
 import { ALLOWED_EMAIL_DOMAIN } from '#root/config.js';
 
 @Injectable()
