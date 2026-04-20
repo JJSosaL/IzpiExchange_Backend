@@ -16,6 +16,9 @@
 			"#common/*": [
 				"./src/common/*"
 			],
+			"#lib/*": [
+				"./src/lib/*"
+			],
 			"#modules/*": [
 				"./src/modules/*"
 			],

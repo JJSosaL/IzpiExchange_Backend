@@ -26,6 +26,7 @@
 	},
 	"imports": {
 		"#common/*": "./dist/common/*",
+		"#lib/*": "./dist/lib/*",
 		"#modules/*": "./dist/modules/*",
 		"#mongo/*": "./dist/mongo/*",
 		"#root/*": "./dist/*",
