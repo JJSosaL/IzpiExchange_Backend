@@ -9,7 +9,7 @@ export const SignUpSchema = object(
 	'El cuerpo de la petición debe ser un objeto',
 );
 
-export const VerifyOtpSchema = object(
+export const VerifySignUpOtpSchema = object(
 	{
 		otp: string('El código OTP debe ser una cadena de texto').length(
 			OTP_LENGTH,
@@ -20,4 +20,4 @@ export const VerifyOtpSchema = object(
 );
 
 export type SignUpSchemaDto = ZodInfer<typeof SignUpSchema>;
-export type VerifyOtpSchemaDto = ZodInfer<typeof VerifyOtpSchema>;
+export type VerifySignUpOtpSchemaDto = ZodInfer<typeof VerifySignUpOtpSchema>;

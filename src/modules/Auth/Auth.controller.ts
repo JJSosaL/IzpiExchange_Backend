@@ -1,40 +1,64 @@
-import { Body, Controller, Inject, Post, UsePipes } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Inject, Post, UsePipes } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import dayjs from 'dayjs';
+import type { Model } from 'mongoose';
 import { ZodValidationPipe } from '#common/pipes/ZodValidation.pipe.js';
+import {
+	ACCOUNT_WITH_SAME_EMAIL_ALREADY_REGISTERED_RESPONSE,
+	EMAIL_DOMAIN_NOT_ALLOWED_RESPONSE,
+} from '#lib/Responses/Auth.js';
+import { NOT_FOUND_RESPONSE } from '#lib/Responses/Shared.js';
 import { EmailService } from '#modules/Email/Email.service.js';
-import { MongoOrm } from '#prisma/Database.js';
-import { SignUpSchema, type SignUpSchemaDto } from '#zod/AuthSchema.js';
+import { Account } from '#mongo/Account.js';
+import { SignUpOtp } from '#mongo/SignUpOtp.js';
+import {
+	SignUpSchema,
+	type SignUpSchemaDto,
+	VerifySignUpOtpSchema,
+	type VerifySignUpOtpSchemaDto,
+} from '#zod/AuthSchema.js';
 import { AuthService } from './Auth.service.js';
 
 @Controller('auth')
 export class AuthController {
+	private static OTP_MINUTES = 5 as const;
+
 	public constructor(
+		@InjectModel(Account.name) private readonly accountModel: Model<Account>,
+		@InjectModel(SignUpOtp.name)
+		private readonly signUpOtpModel: Model<SignUpOtp>,
+
 		@Inject(AuthService) private readonly authService: AuthService,
 		@Inject(EmailService) private readonly emailService: EmailService,
 	) {}
 
 	@Post('sign-up')
+	@HttpCode(HttpStatus.CREATED)
 	@UsePipes(new ZodValidationPipe(SignUpSchema))
-	protected async handleAccountCreation(@Body() signUpData: SignUpSchemaDto) {
-		const { email, password } = signUpData;
+	protected async handleSignUp(@Body() signUpData: SignUpSchemaDto) {
+		const { email } = signUpData;
+
+		// Verificar que el correo electrónico proviene de un dominio permitido.
+		const isValidEmailDomain = this.authService.isValidEmailDomain(email);
+
+		if (!isValidEmailDomain) {
+			throw EMAIL_DOMAIN_NOT_ALLOWED_RESPONSE();
+		}
 
 		const otp = this.authService.generateOneTimePasswordCode();
 
-		const otpExpiration = dayjs().add(10, 'minutes');
+		const otpExpiration = dayjs().add(AuthController.OTP_MINUTES, 'minutes');
 		const otpExpirationDate = otpExpiration.toDate();
+
+		await this.signUpOtpModel.create({
+			email,
+			expiresIn: otpExpirationDate,
+			otp,
+		});
 
 		await this.emailService.sendOneTimePasswordMail({
 			otpCode: otp,
 			recipient: email,
-		});
-
-		await MongoOrm.pendingAccountVerification.create({
-			createdAt: new Date(),
-			email,
-			expiresIn: otpExpirationDate,
-			otp,
-			password,
-			updatedAt: new Date(),
 		});
 
 		/*
@@ -44,5 +68,45 @@ export class AuthController {
 		return {
 			step: 'VERIFY_OTP',
 		};
+	}
+
+	@Post('sign-up/verify-otp')
+	@UsePipes(new ZodValidationPipe(VerifySignUpOtpSchema))
+	protected async verifySignUpOtp(@Body() verifyOtpData: VerifySignUpOtpSchemaDto) {
+		const { otp } = verifyOtpData;
+
+		const otpDocument = await this.signUpOtpModel.findOne({
+			otp,
+		});
+
+		if (!otpDocument) {
+			throw NOT_FOUND_RESPONSE();
+		}
+
+		/**
+		 * Verificamos si el código 'One-Time Password' ha expirado.
+		 *
+		 * En caso verdadero, eliminamos el documento de la base de datos.
+		 */
+		if (otpDocument.hasAlreadyExpired) {
+			await this.signUpOtpModel.deleteOne({
+				otp,
+			});
+
+			throw NOT_FOUND_RESPONSE();
+		}
+
+		const { email } = otpDocument;
+		const accountDocument = await this.accountModel.findOne({
+			email,
+		});
+
+		/*
+		 * Comprobamos si ya existe una cuenta con el mismo correo electrónico
+		 * asociado.
+		 */
+		if (accountDocument) {
+			throw ACCOUNT_WITH_SAME_EMAIL_ALREADY_REGISTERED_RESPONSE();
+		}
 	}
 }
