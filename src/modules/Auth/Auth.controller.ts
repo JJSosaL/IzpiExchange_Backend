@@ -9,8 +9,8 @@ import {
 } from '#lib/Responses/Auth.js';
 import { NOT_FOUND_RESPONSE } from '#lib/Responses/Shared.js';
 import { EmailService } from '#modules/Email/Email.service.js';
-import { Account } from '#mongo/Account.js';
 import { SignUpOtp } from '#mongo/SignUpOtp.js';
+import { User } from '#mongo/User.js';
 import {
 	SignUpSchema,
 	type SignUpSchemaDto,
@@ -24,9 +24,9 @@ export class AuthController {
 	private static OTP_MINUTES = 5 as const;
 
 	public constructor(
-		@InjectModel(Account.name) private readonly accountModel: Model<Account>,
 		@InjectModel(SignUpOtp.name)
 		private readonly signUpOtpModel: Model<SignUpOtp>,
+		@InjectModel(User.name) private readonly userModel: Model<User>,
 
 		@Inject(AuthService) private readonly authService: AuthService,
 		@Inject(EmailService) private readonly emailService: EmailService,
@@ -97,7 +97,7 @@ export class AuthController {
 		}
 
 		const { email } = otpDocument;
-		const accountDocument = await this.accountModel.findOne({
+		const accountDocument = await this.userModel.findOne({
 			email,
 		});
 
