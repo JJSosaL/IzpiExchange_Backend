@@ -39,6 +39,11 @@ export const EMAIL_USER_NAME = getEnvironmentVariable('EMAIL_USER_NAME');
 export const EMAIL_USER_TOKEN = getEnvironmentVariable('EMAIL_USER_TOKEN');
 
 /**
+ * El secreto que se utilizará para validar y firmar JSON Web Tokens.
+ */
+export const JWT_SECRET = getEnvironmentVariable('JWT_SECRET');
+
+/**
  * La URL del servidor de MongoDB donde se guardarán todos los datos de la
  * aplicación.
  */

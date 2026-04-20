@@ -3,6 +3,7 @@
 	"dependencies": {
 		"@nestjs/common": "11.1.19",
 		"@nestjs/core": "11.1.19",
+		"@nestjs/jwt": "11.0.2",
 		"@nestjs/mongoose": "11.0.4",
 		"@nestjs/platform-express": "11.1.19",
 		"dayjs": "1.11.20",
