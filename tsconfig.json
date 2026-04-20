@@ -19,8 +19,8 @@
 			"#modules/*": [
 				"./src/modules/*"
 			],
-			"#prisma/*": [
-				"./src/prisma/*"
+			"#mongo/*": [
+				"./src/mongo/*"
 			],
 			"#root/*": [
 				"./src/*"
@@ -33,7 +33,7 @@
 			]
 		},
 		"resolveJsonModule": true,
-		"rootDir": ".",
+		"rootDir": "src",
 		"skipDefaultLibCheck": true,
 		"skipLibCheck": true,
 		"strict": true,
@@ -42,9 +42,5 @@
 		"types": [
 			"node"
 		]
-	},
-	"include": [
-		"src/**/*.ts",
-		"prisma-next.config.ts"
-	]
+	}
 }

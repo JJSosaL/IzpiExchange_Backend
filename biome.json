@@ -14,9 +14,7 @@
 	"files": {
 		"includes": [
 			"**",
-			"!!**/dist",
-			"!!**/src/contract.d.ts",
-			"!!**/src/contract.json"
+			"!!**/dist"
 		]
 	},
 	"formatter": {
