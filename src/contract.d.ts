@@ -13,7 +13,7 @@ import type {
 } from '@prisma-next/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'sha256:48c0e548b92d2e420a6efb5a50949eefd4377e5d45df38b4037f6e257b83c719'>;
+  StorageHashBase<'sha256:8d93de871d633b0e953d7bbe615945b3ff82edb847040c535d65c0f64e0d97ec'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'sha256:840de65fba7eb950a31487f74ee420b9c21205f38bce58579026747e0264e840'>;
@@ -29,12 +29,11 @@ export type FieldOutputTypes = {
     readonly password: CodecTypes['mongo/string@1']['output'];
     readonly updatedAt: CodecTypes['mongo/date@1']['output'];
   };
-  readonly PendingAccountVerification: {
+  readonly OneTimePassword: {
     readonly createdAt: CodecTypes['mongo/date@1']['output'];
-    readonly email: CodecTypes['mongo/string@1']['output'];
     readonly expiresIn: CodecTypes['mongo/date@1']['output'];
+    readonly kind: CodecTypes['mongo/string@1']['output'];
     readonly otp: CodecTypes['mongo/string@1']['output'];
-    readonly password: CodecTypes['mongo/string@1']['output'];
     readonly updatedAt: CodecTypes['mongo/date@1']['output'];
   };
   readonly Product: {
@@ -46,6 +45,7 @@ export type FieldOutputTypes = {
     readonly price: CodecTypes['mongo/int32@1']['output'];
     readonly updatedAt: CodecTypes['mongo/date@1']['output'];
   };
+  readonly SignUpOneTimePassword: { readonly email: CodecTypes['mongo/string@1']['output'] };
   readonly User: {
     readonly accountId: CodecTypes['mongo/string@1']['output'];
     readonly createdAt: CodecTypes['mongo/date@1']['output'];
@@ -64,12 +64,11 @@ export type FieldInputTypes = {
     readonly password: CodecTypes['mongo/string@1']['input'];
     readonly updatedAt: CodecTypes['mongo/date@1']['input'];
   };
-  readonly PendingAccountVerification: {
+  readonly OneTimePassword: {
     readonly createdAt: CodecTypes['mongo/date@1']['input'];
-    readonly email: CodecTypes['mongo/string@1']['input'];
     readonly expiresIn: CodecTypes['mongo/date@1']['input'];
+    readonly kind: CodecTypes['mongo/string@1']['input'];
     readonly otp: CodecTypes['mongo/string@1']['input'];
-    readonly password: CodecTypes['mongo/string@1']['input'];
     readonly updatedAt: CodecTypes['mongo/date@1']['input'];
   };
   readonly Product: {
@@ -81,6 +80,7 @@ export type FieldInputTypes = {
     readonly price: CodecTypes['mongo/int32@1']['input'];
     readonly updatedAt: CodecTypes['mongo/date@1']['input'];
   };
+  readonly SignUpOneTimePassword: { readonly email: CodecTypes['mongo/string@1']['input'] };
   readonly User: {
     readonly accountId: CodecTypes['mongo/string@1']['input'];
     readonly createdAt: CodecTypes['mongo/date@1']['input'];
@@ -119,7 +119,7 @@ type ContractBase = ContractType<
           readonly validationAction: 'error';
         };
       };
-      readonly pendingAccountVerification: {
+      readonly oneTimePassword: {
         readonly indexes: readonly [
           {
             readonly keys: readonly [{ readonly field: 'otp'; readonly direction: 1 }];
@@ -131,20 +131,23 @@ type ContractBase = ContractType<
             readonly bsonType: 'object';
             readonly properties: {
               readonly createdAt: { readonly bsonType: 'date' };
-              readonly email: { readonly bsonType: 'string' };
               readonly expiresIn: { readonly bsonType: 'date' };
+              readonly kind: { readonly bsonType: 'string' };
               readonly otp: { readonly bsonType: 'string' };
-              readonly password: { readonly bsonType: 'string' };
               readonly updatedAt: { readonly bsonType: 'date' };
             };
-            readonly required: readonly [
-              'createdAt',
-              'email',
-              'expiresIn',
-              'otp',
-              'password',
-              'updatedAt',
-            ];
+            readonly required: readonly ['createdAt', 'expiresIn', 'kind', 'otp', 'updatedAt'];
+          };
+          readonly validationLevel: 'strict';
+          readonly validationAction: 'error';
+        };
+      };
+      readonly signUpOneTimePassword: {
+        readonly validator: {
+          readonly jsonSchema: {
+            readonly bsonType: 'object';
+            readonly properties: { readonly email: { readonly bsonType: 'string' } };
+            readonly required: readonly ['email'];
           };
           readonly validationLevel: 'strict';
           readonly validationAction: 'error';
@@ -255,25 +258,21 @@ type ContractBase = ContractType<
       };
       readonly storage: { readonly collection: 'accounts' };
     };
-    readonly PendingAccountVerification: {
+    readonly OneTimePassword: {
       readonly fields: {
         readonly createdAt: {
           readonly nullable: false;
           readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
         };
-        readonly email: {
-          readonly nullable: false;
-          readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
-        };
         readonly expiresIn: {
           readonly nullable: false;
           readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
         };
-        readonly otp: {
+        readonly kind: {
           readonly nullable: false;
           readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
         };
-        readonly password: {
+        readonly otp: {
           readonly nullable: false;
           readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
         };
@@ -283,7 +282,9 @@ type ContractBase = ContractType<
         };
       };
       readonly relations: Record<string, never>;
-      readonly storage: { readonly collection: 'pendingAccountVerification' };
+      readonly storage: { readonly collection: 'oneTimePassword' };
+      readonly discriminator: { readonly field: 'kind' };
+      readonly variants: { readonly SignUpOneTimePassword: { readonly value: 'sign_up' } };
     };
     readonly Product: {
       readonly fields: {
@@ -318,6 +319,17 @@ type ContractBase = ContractType<
       };
       readonly relations: Record<string, never>;
       readonly storage: { readonly collection: 'products' };
+    };
+    readonly SignUpOneTimePassword: {
+      readonly fields: {
+        readonly email: {
+          readonly nullable: false;
+          readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+        };
+      };
+      readonly relations: Record<string, never>;
+      readonly storage: { readonly collection: 'oneTimePassword' };
+      readonly base: 'OneTimePassword';
     };
     readonly User: {
       readonly fields: {
@@ -368,7 +380,7 @@ type ContractBase = ContractType<
   readonly targetFamily: 'mongo';
   readonly roots: {
     readonly accounts: 'Account';
-    readonly pendingAccountVerification: 'PendingAccountVerification';
+    readonly oneTimePassword: 'OneTimePassword';
     readonly products: 'Product';
     readonly users: 'User';
   };

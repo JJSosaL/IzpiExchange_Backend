@@ -5,7 +5,7 @@
   "profileHash": "sha256:840de65fba7eb950a31487f74ee420b9c21205f38bce58579026747e0264e840",
   "roots": {
     "accounts": "Account",
-    "pendingAccountVerification": "PendingAccountVerification",
+    "oneTimePassword": "OneTimePassword",
     "products": "Product",
     "users": "User"
   },
@@ -66,19 +66,15 @@
         "collection": "accounts"
       }
     },
-    "PendingAccountVerification": {
+    "OneTimePassword": {
+      "discriminator": {
+        "field": "kind"
+      },
       "fields": {
         "createdAt": {
           "nullable": false,
           "type": {
             "codecId": "mongo/date@1",
-            "kind": "scalar"
-          }
-        },
-        "email": {
-          "nullable": false,
-          "type": {
-            "codecId": "mongo/string@1",
             "kind": "scalar"
           }
         },
@@ -89,14 +85,14 @@
             "kind": "scalar"
           }
         },
-        "otp": {
+        "kind": {
           "nullable": false,
           "type": {
             "codecId": "mongo/string@1",
             "kind": "scalar"
           }
         },
-        "password": {
+        "otp": {
           "nullable": false,
           "type": {
             "codecId": "mongo/string@1",
@@ -113,7 +109,12 @@
       },
       "relations": {},
       "storage": {
-        "collection": "pendingAccountVerification"
+        "collection": "oneTimePassword"
+      },
+      "variants": {
+        "SignUpOneTimePassword": {
+          "value": "sign_up"
+        }
       }
     },
     "Product": {
@@ -171,6 +172,22 @@
       "relations": {},
       "storage": {
         "collection": "products"
+      }
+    },
+    "SignUpOneTimePassword": {
+      "base": "OneTimePassword",
+      "fields": {
+        "email": {
+          "nullable": false,
+          "type": {
+            "codecId": "mongo/string@1",
+            "kind": "scalar"
+          }
+        }
+      },
+      "relations": {},
+      "storage": {
+        "collection": "oneTimePassword"
       }
     },
     "User": {
@@ -290,7 +307,7 @@
           "validationLevel": "strict"
         }
       },
-      "pendingAccountVerification": {
+      "oneTimePassword": {
         "indexes": [
           {
             "keys": [
@@ -309,16 +326,13 @@
               "createdAt": {
                 "bsonType": "date"
               },
-              "email": {
-                "bsonType": "string"
-              },
               "expiresIn": {
                 "bsonType": "date"
               },
-              "otp": {
+              "kind": {
                 "bsonType": "string"
               },
-              "password": {
+              "otp": {
                 "bsonType": "string"
               },
               "updatedAt": {
@@ -327,10 +341,9 @@
             },
             "required": [
               "createdAt",
-              "email",
               "expiresIn",
+              "kind",
               "otp",
-              "password",
               "updatedAt"
             ]
           },
@@ -390,6 +403,23 @@
           "validationLevel": "strict"
         }
       },
+      "signUpOneTimePassword": {
+        "validator": {
+          "jsonSchema": {
+            "bsonType": "object",
+            "properties": {
+              "email": {
+                "bsonType": "string"
+              }
+            },
+            "required": [
+              "email"
+            ]
+          },
+          "validationAction": "error",
+          "validationLevel": "strict"
+        }
+      },
       "users": {
         "indexes": [
           {
@@ -443,7 +473,7 @@
         }
       }
     },
-    "storageHash": "sha256:48c0e548b92d2e420a6efb5a50949eefd4377e5d45df38b4037f6e257b83c719"
+    "storageHash": "sha256:8d93de871d633b0e953d7bbe615945b3ff82edb847040c535d65c0f64e0d97ec"
   },
   "capabilities": {},
   "extensionPacks": {},

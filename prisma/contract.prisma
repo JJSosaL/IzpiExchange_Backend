@@ -9,13 +9,20 @@ model Account {
     @@map("accounts")
 }
 
-model PendingAccountVerification {
+model OneTimePassword {
     createdAt DateTime @default(now())
-    email     String
     expiresIn DateTime
+    kind      String
     otp       String   @id @unique
-    password  String
     updatedAt DateTime @updatedAt
+
+    @@discriminator(kind)
+}
+
+model SignUpOneTimePassword {
+	email String
+
+    @@base(OneTimePassword, "sign_up")
 }
 
 model Product {
