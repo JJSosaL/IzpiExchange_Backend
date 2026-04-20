@@ -9,8 +9,8 @@ export class AuthService {
 	private static OTP_MIN_LENGTH = 100000 as const;
 
 	/**
-	 * Genera un código 'One-Time Password' para verificar la creación de la
-	 * cuenta.
+	 * Genera un código 'One-Time Password' para verificar cualquier acción
+	 * importante sobre las cuentas.
 	 *
 	 * @returns El código 'One-Time Password' como una cadena de texto.
 	 */
