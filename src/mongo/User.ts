@@ -32,6 +32,7 @@ export class User {
 		enum: UserRole,
 		required: true,
 	})
+	declare role: UserRole;
 
 	@Prop({
 		required: true,
