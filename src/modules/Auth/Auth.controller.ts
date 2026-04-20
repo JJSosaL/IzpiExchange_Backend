@@ -1,9 +1,9 @@
 import { randomUUID } from 'node:crypto';
-import { Body, Controller, HttpCode, HttpStatus, Inject, Post, UsePipes } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UsePipes } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import dayjs from 'dayjs';
-import type { Model } from 'mongoose';
+import type { Connection, Model } from 'mongoose';
 import { ZodValidationPipe } from '#common/pipes/ZodValidation.pipe.js';
 import {
 	ACCOUNT_WITH_SAME_EMAIL_ALREADY_REGISTERED_RESPONSE,
@@ -26,6 +26,8 @@ export class AuthController {
 	private static OTP_MINUTES = 5 as const;
 
 	public constructor(
+		@InjectConnection() private readonly connection: Connection,
+
 		@InjectModel(SignUpOtp.name)
 		private readonly signUpOtpModel: Model<SignUpOtp>,
 		@InjectModel(User.name) private readonly userModel: Model<User>,
@@ -36,7 +38,6 @@ export class AuthController {
 	) {}
 
 	@Post('sign-up')
-	@HttpCode(HttpStatus.CREATED)
 	@UsePipes(new ZodValidationPipe(SignUpSchema))
 	protected async handleSignUp(@Body() signUpData: SignUpSchemaDto) {
 		const { email } = signUpData;
@@ -64,13 +65,7 @@ export class AuthController {
 			recipient: email,
 		});
 
-		/*
-		 * Indicar a la aplicación que el siguiente paso será verificar el código
-		 * 'One-Time Password'.
-		 */
-		return {
-			step: 'VERIFY_OTP',
-		};
+		return {};
 	}
 
 	@Post('sign-up/verify-otp')
@@ -115,11 +110,29 @@ export class AuthController {
 		}
 
 		const userId = randomUUID();
+		const session = await this.connection.startSession();
 
-		await this.userModel.create({
-			email,
-			id: userId,
-			username,
+		await session.withTransaction(async () => {
+			await this.signUpOtpModel.deleteOne(
+				{
+					otp,
+				},
+				{
+					session,
+				},
+			);
+			await this.userModel.create(
+				[
+					{
+						email,
+						id: userId,
+						username,
+					},
+				],
+				{
+					session,
+				},
+			);
 		});
 
 		const accessToken = await this.jwtService.signAsync({
