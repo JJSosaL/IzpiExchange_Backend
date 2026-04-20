@@ -1,4 +1,6 @@
+import { randomUUID } from 'node:crypto';
 import { Body, Controller, HttpCode, HttpStatus, Inject, Post, UsePipes } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import dayjs from 'dayjs';
 import type { Model } from 'mongoose';
@@ -30,6 +32,7 @@ export class AuthController {
 
 		@Inject(AuthService) private readonly authService: AuthService,
 		@Inject(EmailService) private readonly emailService: EmailService,
+		@Inject(JwtService) private readonly jwtService: JwtService,
 	) {}
 
 	@Post('sign-up')
@@ -39,7 +42,7 @@ export class AuthController {
 		const { email } = signUpData;
 
 		// Verificar que el correo electrónico proviene de un dominio permitido.
-		const isValidEmailDomain = this.authService.isValidEmailDomain(email);
+		const isValidEmailDomain = this.emailService.isValidEmailDomain(email);
 
 		if (!isValidEmailDomain) {
 			throw EMAIL_DOMAIN_NOT_ALLOWED_RESPONSE();
@@ -97,7 +100,9 @@ export class AuthController {
 		}
 
 		const { email } = otpDocument;
-		const accountDocument = await this.userModel.findOne({
+		const { username } = this.emailService.parseEmail(email);
+
+		const userDocument = await this.userModel.findOne({
 			email,
 		});
 
@@ -105,8 +110,25 @@ export class AuthController {
 		 * Comprobamos si ya existe una cuenta con el mismo correo electrónico
 		 * asociado.
 		 */
-		if (accountDocument) {
+		if (userDocument) {
 			throw ACCOUNT_WITH_SAME_EMAIL_ALREADY_REGISTERED_RESPONSE();
 		}
+
+		const userId = randomUUID();
+
+		await this.userModel.create({
+			email,
+			id: userId,
+			username,
+		});
+
+		const accessToken = await this.jwtService.signAsync({
+			userId,
+			username,
+		});
+
+		return {
+			accessToken,
+		};
 	}
 }

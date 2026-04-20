@@ -2,9 +2,11 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { cwd } from 'node:process';
 import { Injectable } from '@nestjs/common';
+import emailAddresses, { type ParsedMailbox } from 'email-addresses';
 import Handlebars from 'handlebars';
 import { createTransport, type Transporter } from 'nodemailer';
 import {
+	ALLOWED_EMAIL_DOMAIN,
 	EMAIL_HOST_NAME,
 	EMAIL_HOST_PORT,
 	EMAIL_USER_NAME,
@@ -42,12 +44,12 @@ export class EmailService {
 			.catch((error) => console.error(error));
 	}
 
-	/**
-	 * Envía el mensaje en HTML conteniendo el código 'One-Time Password' para
-	 * verificar el correo electrónico.
-	 *
-	 * @param options - Las opciones para enviar el correo electrónico.
-	 */
+	public isValidEmailDomain(email: string): boolean {
+		const { domain } = this.parseEmail(email);
+
+		return domain === ALLOWED_EMAIL_DOMAIN;
+	}
+
 	public async sendOneTimePasswordMail(options: SendOneTimePasswordMailOptions): Promise<void> {
 		const { otpCode, recipient } = options;
 
@@ -67,15 +69,29 @@ export class EmailService {
 			to: recipient,
 		});
 	}
+
+	public parseEmail(email: string): EmailData {
+		const emailData = emailAddresses.parseOneAddress(email) as ParsedMailbox | null;
+
+		if (!emailData) {
+			throw new TypeError(`Formato de correo eletrónico no válido: ${email}`);
+		}
+
+		const { domain, local } = emailData;
+
+		return {
+			domain,
+			username: local,
+		};
+	}
+}
+
+interface EmailData {
+	domain: string;
+	username: string;
 }
 
 interface SendOneTimePasswordMailOptions {
-	/*
-	 * El código 'One-Time Password' que se insertará dentro del mensaje HTML.
-	 */
 	otpCode: string;
-	/**
-	 * El correo electrónico del destinatario.
-	 */
 	recipient: string;
 }

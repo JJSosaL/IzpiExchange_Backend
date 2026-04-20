@@ -1,7 +1,5 @@
 import { randomInt } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
-import emailAddresses, { type ParsedMailbox } from 'email-addresses';
-import { ALLOWED_EMAIL_DOMAIN } from '#root/config.js';
 
 @Injectable()
 export class AuthService {
@@ -19,18 +17,5 @@ export class AuthService {
 		const otpString = otpInteger.toString();
 
 		return otpString;
-	}
-
-	/**
-	 * Verifica que el correo electrónico proviene de un dominio permitido.
-	 *
-	 * @param email - El correo electrónico a verificar si proviene de un dominio
-	 * permitido.
-	 */
-	public isValidEmailDomain(email: string): boolean {
-		const emailStringData = emailAddresses.parseOneAddress(email) as ParsedMailbox;
-		const { domain } = emailStringData;
-
-		return domain === ALLOWED_EMAIL_DOMAIN;
 	}
 }
