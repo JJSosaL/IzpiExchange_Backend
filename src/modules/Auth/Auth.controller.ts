@@ -81,10 +81,11 @@ export class AuthController {
 			throw NOT_FOUND_RESPONSE();
 		}
 
-		/**
+		/*
 		 * Verificamos si el código 'One-Time Password' ha expirado.
 		 *
-		 * En caso verdadero, eliminamos el documento de la base de datos.
+		 * En caso verdadero, debido a que el documento existe pero ha expirado,
+		 * eliminamos el documento de la base de datos.
 		 */
 		if (otpDocument.hasAlreadyExpired) {
 			await this.signUpOtpModel.deleteOne({
