@@ -2,7 +2,6 @@ import { randomUUID } from 'node:crypto';
 import { Body, Controller, Inject, Post, UsePipes } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import dayjs from 'dayjs';
 import type { Connection, Model } from 'mongoose';
 import { ZodValidationPipe } from '#common/pipes/ZodValidation.pipe.js';
 import {
@@ -26,8 +25,6 @@ import { AuthService } from './Auth.service.js';
 
 @Controller('auth')
 export class AuthController {
-	private static OTP_AUTH_MINUTES = 5 as const;
-
 	public constructor(
 		@InjectConnection() private readonly connection: Connection,
 
@@ -52,20 +49,13 @@ export class AuthController {
 			throw EMAIL_DOMAIN_NOT_ALLOWED_RESPONSE();
 		}
 
-		const otp = this.authService.generateOneTimePasswordCode();
-
-		const otpExpiration = dayjs().add(AuthController.OTP_AUTH_MINUTES, 'minutes');
-		const otpExpirationDate = otpExpiration.toDate();
-
-		await this.oneTimePasswordModel.create({
+		const otpCode = await this.authService.generateOneTimePasswordCode({
 			action: OneTimePasswordAction.SignIn,
 			email,
-			expiresIn: otpExpirationDate,
-			otp,
 		});
 
 		await this.emailService.sendSignInMail({
-			otpCode: otp,
+			otpCode,
 			recipient: email,
 		});
 
@@ -84,20 +74,13 @@ export class AuthController {
 			throw EMAIL_DOMAIN_NOT_ALLOWED_RESPONSE();
 		}
 
-		const otp = this.authService.generateOneTimePasswordCode();
-
-		const otpExpiration = dayjs().add(AuthController.OTP_AUTH_MINUTES, 'minutes');
-		const otpExpirationDate = otpExpiration.toDate();
-
-		await this.oneTimePasswordModel.create({
+		const otpCode = await this.authService.generateOneTimePasswordCode({
 			action: OneTimePasswordAction.SignUp,
 			email,
-			expiresIn: otpExpirationDate,
-			otp,
 		});
 
 		await this.emailService.sendSignUpMail({
-			otpCode: otp,
+			otpCode,
 			recipient: email,
 		});
 
