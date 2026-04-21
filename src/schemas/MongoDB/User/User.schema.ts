@@ -1,10 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import type { HydratedDocument } from 'mongoose';
-
-export enum UserRole {
-	Manager = 'MANAGER',
-	Normal = 'NORMAL',
-}
+import { UserRole } from './User.types.js';
 
 @Schema({
 	timestamps: true,
@@ -41,5 +36,3 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
-
-export type UserDocument = HydratedDocument<User>;

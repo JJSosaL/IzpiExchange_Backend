@@ -1,10 +1,9 @@
 import { Prop, Schema, SchemaFactory, Virtual } from '@nestjs/mongoose';
-import type { HydratedDocument } from 'mongoose';
 
 @Schema({
 	timestamps: true,
 })
-export class SignUpOtp {
+export class OneTimePassword {
 	@Prop({
 		required: true,
 	})
@@ -16,7 +15,7 @@ export class SignUpOtp {
 	declare expiresIn: Date;
 
 	@Virtual({
-		get: function (this: SignUpOtp) {
+		get: function (this: OneTimePassword) {
 			return Date.now() > this.expiresIn.getTime();
 		},
 	})
@@ -29,6 +28,4 @@ export class SignUpOtp {
 	declare otp: string;
 }
 
-export const SignUpOtpSchema = SchemaFactory.createForClass(SignUpOtp);
-
-export type SignUpOtpDocument = HydratedDocument<SignUpOtp>;
+export const OneTimePasswordSchema = SchemaFactory.createForClass(OneTimePassword);
