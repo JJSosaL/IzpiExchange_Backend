@@ -42,7 +42,6 @@ export class AuthController {
 	protected async handleSignIn(@Body() signInData: SignInDto) {
 		const { email } = signInData;
 
-		// Verificar que el correo electrónico proviene de un dominio permitido.
 		const isValidEmailDomain = this.emailService.isValidEmailDomain(email);
 
 		if (!isValidEmailDomain) {
@@ -67,7 +66,6 @@ export class AuthController {
 	protected async handleSignUp(@Body() signUpData: SignUpDto) {
 		const { email } = signUpData;
 
-		// Verificar que el correo electrónico proviene de un dominio permitido.
 		const isValidEmailDomain = this.emailService.isValidEmailDomain(email);
 
 		if (!isValidEmailDomain) {
