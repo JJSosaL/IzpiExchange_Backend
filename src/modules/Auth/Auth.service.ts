@@ -23,7 +23,7 @@ export class AuthService {
 			},
 		});
 
-		console.log(`Se han eliminado ${deletedCount} documento(s) expirados`);
+		console.log(`Se han eliminado ${deletedCount} documento(s) expirado(s)`);
 	}
 
 	public generateOneTimePasswordCode(): string {
