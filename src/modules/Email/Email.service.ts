@@ -44,26 +44,56 @@ export class EmailService {
 			.catch((error) => console.error(error));
 	}
 
-	public isValidEmailDomain(email: string): boolean {
-		const { domain } = this.parseEmail(email);
+	private createOneTimePasswordMail(
+		templateFileName: `${string}.html`,
+		options: Pick<CreateOneTimePasswordOptions, 'otpCode'>,
+	): string {
+		const { otpCode } = options;
 
-		return domain === ALLOWED_EMAIL_DOMAIN;
-	}
-
-	public async sendOneTimePasswordMail(options: SendOneTimePasswordMailOptions): Promise<void> {
-		const { otpCode, recipient } = options;
-
-		const handlebarsTemplatePath = join(cwd(), 'templates', 'OneTimePasswordMessage.html');
+		const handlebarsTemplatePath = join(cwd(), 'templates', templateFileName);
 		const handlebarsTemplateContent = readFileSync(handlebarsTemplatePath, 'utf-8');
 
 		const handlebarsTemplate = Handlebars.compile(handlebarsTemplateContent)({
 			otpCode,
 		});
 
+		return handlebarsTemplate;
+	}
+
+	public isValidEmailDomain(email: string): boolean {
+		const { domain } = this.parseEmail(email);
+
+		return domain === ALLOWED_EMAIL_DOMAIN;
+	}
+
+	public async sendSignInMail(options: SendSignInMailOptions): Promise<void> {
+		const { recipient } = options;
+		const oneTimePasswordHtml = this.createOneTimePasswordMail(
+			'SignInOneTimePasswordMessage.html',
+			options,
+		);
+
 		await this.nodeMailer.sendMail({
 			encoding: 'utf-8',
 			from: `"IzpiExchange" <${EmailService.EMAIL_USER_NAME}>`,
-			html: handlebarsTemplate,
+			html: oneTimePasswordHtml,
+			priority: 'normal',
+			subject: '📲 Código para Iniciar Sesión - IzpiExchange',
+			to: recipient,
+		});
+	}
+
+	public async sendSignUpMail(options: SendSignUpMailOptions): Promise<void> {
+		const { recipient } = options;
+		const oneTimePasswordHtml = this.createOneTimePasswordMail(
+			'SignUpOneTimePasswordMessage.html',
+			options,
+		);
+
+		await this.nodeMailer.sendMail({
+			encoding: 'utf-8',
+			from: `"IzpiExchange" <${EmailService.EMAIL_USER_NAME}>`,
+			html: oneTimePasswordHtml,
 			priority: 'normal',
 			subject: '✅ Código de Verificación - IzpiExchange',
 			to: recipient,
@@ -91,7 +121,10 @@ interface EmailData {
 	username: string;
 }
 
-interface SendOneTimePasswordMailOptions {
+interface CreateOneTimePasswordOptions {
 	otpCode: string;
 	recipient: string;
 }
+
+type SendSignInMailOptions = CreateOneTimePasswordOptions;
+type SendSignUpMailOptions = CreateOneTimePasswordOptions;
