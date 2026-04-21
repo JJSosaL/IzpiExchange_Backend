@@ -17,6 +17,7 @@ export class OneTimePassword {
 	declare email: string;
 
 	@Prop({
+		expires: 0,
 		required: true,
 	})
 	declare expiresIn: Date;
