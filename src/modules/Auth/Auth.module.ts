@@ -2,9 +2,12 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { EmailModule } from '#modules/Email/Email.module.js';
-import { SignUpOtp, SignUpOtpSchema } from '#mongo/SignUpOtp.js';
-import { User, UserSchema } from '#mongo/User.js';
 import { JWT_SECRET } from '#root/config.js';
+import {
+	OneTimePassword,
+	OneTimePasswordSchema,
+} from '#schemas/MongoDB/OneTimePassword/OneTimePassword.js';
+import { User, UserSchema } from '#schemas/MongoDB/User/User.schema.js';
 import { AuthController } from './Auth.controller.js';
 import { AuthService } from './Auth.service.js';
 
@@ -34,8 +37,8 @@ import { AuthService } from './Auth.service.js';
 		]),
 		MongooseModule.forFeature([
 			{
-				name: SignUpOtp.name,
-				schema: SignUpOtpSchema,
+				name: OneTimePassword.name,
+				schema: OneTimePasswordSchema,
 			},
 		]),
 	],

@@ -1,9 +1,16 @@
 import { Prop, Schema, SchemaFactory, Virtual } from '@nestjs/mongoose';
+import { OneTimePasswordAction } from './OneTimePassword.types.js';
 
 @Schema({
 	timestamps: true,
 })
 export class OneTimePassword {
+	@Prop({
+		enum: OneTimePasswordAction,
+		required: true,
+	})
+	declare action: OneTimePasswordAction;
+
 	@Prop({
 		required: true,
 	})
