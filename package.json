@@ -28,10 +28,9 @@
 		"#common/*": "./dist/common/*",
 		"#lib/*": "./dist/lib/*",
 		"#modules/*": "./dist/modules/*",
-		"#mongo/*": "./dist/mongo/*",
 		"#root/*": "./dist/*",
-		"#utils/*": "./dist/utils/*",
-		"#zod/*": "./dist/zod/*"
+		"#schemas/*": "./dist/schemas/*",
+		"#utils/*": "./dist/utils/*"
 	},
 	"license": "CC-BY-SA-4.0",
 	"main": "dist/index.js",

@@ -28,6 +28,9 @@
 			"#root/*": [
 				"./src/*"
 			],
+			"#schemas/*": [
+				"./src/schemas/*"
+			],
 			"#utils/*": [
 				"./src/utils/*"
 			],
