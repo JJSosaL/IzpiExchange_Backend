@@ -3,12 +3,13 @@ import { Body, Controller, Inject, Post, UsePipes } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import type { Connection, Model } from 'mongoose';
+import { match } from 'ts-pattern';
 import { ZodValidationPipe } from '#common/pipes/ZodValidation.pipe.js';
 import {
 	ACCOUNT_WITH_SAME_EMAIL_ALREADY_REGISTERED_RESPONSE,
 	EMAIL_DOMAIN_NOT_ALLOWED_RESPONSE,
 } from '#lib/Responses/Auth.js';
-import { INTERNAL_SERVER_ERROR, NOT_FOUND_RESPONSE } from '#lib/Responses/Shared.js';
+import { NOT_FOUND_RESPONSE } from '#lib/Responses/Shared.js';
 import { EmailService } from '#modules/Email/Email.service.js';
 import { OneTimePassword } from '#root/schemas/MongoDB/OneTimePassword/OneTimePassword.js';
 import { OneTimePasswordAction } from '#root/schemas/MongoDB/OneTimePassword/OneTimePassword.types.js';
@@ -88,38 +89,17 @@ export class AuthController {
 	@Post('verify-otp')
 	@UsePipes(new ZodValidationPipe(VerifyOneTimePasswordSchema))
 	protected async verifySignUpOtp(@Body() verifyOtpData: VerifyOneTimePasswordDto) {
-		const { action, otp } = verifyOtpData;
+		const { action, otpCode } = verifyOtpData;
 
-		const otpDocument = await this.oneTimePasswordModel.findOne({
+		const oneTimePasswordDocument = await this.authService.getOneTimePassword({
 			action,
-			otp,
+			otpCode,
 		});
 
-		if (!otpDocument) {
-			throw NOT_FOUND_RESPONSE();
-		}
+		const { email } = oneTimePasswordDocument;
 
-		/*
-		 * Verificamos si el código 'One-Time Password' ha expirado.
-		 *
-		 * En caso verdadero, debido a que el documento existe pero ha expirado,
-		 * eliminamos el documento de la base de datos.
-		 */
-		if (otpDocument.hasAlreadyExpired) {
-			await this.oneTimePasswordModel
-				.deleteOne({
-					action,
-					otp,
-				})
-				.then(() => {
-					throw NOT_FOUND_RESPONSE();
-				});
-		}
-
-		const { email } = otpDocument;
-
-		switch (action) {
-			case OneTimePasswordAction.SignIn: {
+		match(action)
+			.with(OneTimePasswordAction.SignIn, async () => {
 				const userDocument = await this.userModel.findOne({
 					email,
 				});
@@ -136,14 +116,14 @@ export class AuthController {
 
 				await this.oneTimePasswordModel.deleteOne({
 					action,
-					otp,
+					otpCode,
 				});
 
 				return {
 					accessToken,
 				};
-			}
-			case OneTimePasswordAction.SignUp: {
+			})
+			.with(OneTimePasswordAction.SignUp, async () => {
 				const userDocument = await this.userModel.findOne({
 					email,
 				});
@@ -165,7 +145,7 @@ export class AuthController {
 					await this.oneTimePasswordModel.deleteOne(
 						{
 							action,
-							otp,
+							otpCode,
 						},
 						{
 							session,
@@ -193,10 +173,6 @@ export class AuthController {
 				return {
 					accessToken,
 				};
-			}
-			default: {
-				throw INTERNAL_SERVER_ERROR();
-			}
-		}
+			});
 	}
 }

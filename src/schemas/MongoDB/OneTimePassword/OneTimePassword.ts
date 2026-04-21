@@ -33,7 +33,7 @@ export class OneTimePassword {
 		required: true,
 		unique: true,
 	})
-	declare otp: string;
+	declare otpCode: string;
 }
 
 export const OneTimePasswordSchema = SchemaFactory.createForClass(OneTimePassword);

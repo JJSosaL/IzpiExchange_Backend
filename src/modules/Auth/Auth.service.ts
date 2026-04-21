@@ -3,7 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import dayjs from 'dayjs';
 import type { Model } from 'mongoose';
-import type { OneTimePasswordAction } from '#root/schemas/MongoDB/OneTimePassword/OneTimePassword.types.js';
+import { NOT_FOUND_RESPONSE } from '#lib/Responses/Shared.js';
+import type {
+	OneTimePasswordAction,
+	OneTimePasswordDocument,
+} from '#root/schemas/MongoDB/OneTimePassword/OneTimePassword.types.js';
 import { OneTimePassword } from '#schemas/MongoDB/OneTimePassword/OneTimePassword.js';
 
 @Injectable()
@@ -23,8 +27,8 @@ export class AuthService {
 	): Promise<string> {
 		const { action, email } = options;
 
-		const otpInteger = randomInt(AuthService.OTP_MIN_LENGTH, AuthService.OTP_MAX_LENGTH);
-		const otpString = otpInteger.toString();
+		const otpCodeInteger = randomInt(AuthService.OTP_MIN_LENGTH, AuthService.OTP_MAX_LENGTH);
+		const otpCode = otpCodeInteger.toString();
 
 		const otpExpiration = dayjs().add(AuthService.OTP_EXPIRATION_MINUTES, 'minutes');
 		const otpExpirationDate = otpExpiration.toDate();
@@ -33,11 +37,36 @@ export class AuthService {
 			action,
 			email,
 			expiresIn: otpExpirationDate,
-			otp: otpString,
+			otpCode,
 		});
 
-		return otpString;
+		return otpCode;
 	}
+
+	public async getOneTimePassword(
+		options: GetOneTimePasswordOptions,
+	): Promise<OneTimePasswordDocument> {
+		const { action, otpCode } = options;
+
+		const oneTimePasswordDocument = await this.oneTimePasswordModel.findOneAndDelete({
+			action,
+			expiresIn: {
+				$gt: new Date(),
+			},
+			otpCode,
+		});
+
+		if (!oneTimePasswordDocument) {
+			throw NOT_FOUND_RESPONSE();
+		}
+
+		return oneTimePasswordDocument;
+	}
+}
+
+interface GetOneTimePasswordOptions {
+	action: OneTimePasswordAction;
+	otpCode: string;
 }
 
 interface GenerateOneTimePasswordCodeOptions {

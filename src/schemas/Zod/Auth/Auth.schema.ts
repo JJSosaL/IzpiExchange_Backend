@@ -29,7 +29,7 @@ export const SignUpSchema = object(
 export const VerifyOneTimePasswordSchema = object(
 	{
 		action: enum_(OneTimePasswordAction, OTP_ACTION_MUST_BE_ENUM),
-		otp: string(OTP_CODE_MUST_BE_STRING)
+		otpCode: string(OTP_CODE_MUST_BE_STRING)
 			.length(OTP_CHARACTERS_LENGTH, OTP_CODE_MUST_HAVE_6_CHARACTERS)
 			.regex(OTP_FORMAT_REGEX, OTP_CODE_MUST_HAVE_VALID_FORMAT),
 	},
