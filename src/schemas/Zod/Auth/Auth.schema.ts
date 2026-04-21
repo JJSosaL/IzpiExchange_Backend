@@ -1,4 +1,5 @@
 import { email, enum as enum_, object, string, type infer as ZodInfer } from 'zod';
+import { OneTimePasswordAction } from '#root/schemas/MongoDB/OneTimePassword/OneTimePassword.types.js';
 import { BODY_PAYLOAD_MUST_BE_OBJECT } from '../Shared/Shared.messages.js';
 import {
 	EMAIL_MUST_HAVE_VALID_FORMAT,
@@ -7,11 +8,6 @@ import {
 	OTP_CODE_MUST_HAVE_6_CHARACTERS,
 	OTP_CODE_MUST_HAVE_VALID_FORMAT,
 } from './Auth.messages.js';
-
-export enum VerifyOtpAction {
-	SignIn = 'SIGN_IN',
-	SignUp = 'SIGN_UP',
-}
 
 const OTP_CHARACTERS_LENGTH = 6;
 const OTP_FORMAT_REGEX = /^\d+$/;
@@ -30,9 +26,9 @@ export const SignUpSchema = object(
 	BODY_PAYLOAD_MUST_BE_OBJECT,
 );
 
-export const VerifyOtpSchema = object(
+export const VerifyOneTimePasswordSchema = object(
 	{
-		action: enum_(VerifyOtpAction, OTP_ACTION_MUST_BE_ENUM),
+		action: enum_(OneTimePasswordAction, OTP_ACTION_MUST_BE_ENUM),
 		otp: string(OTP_CODE_MUST_BE_STRING)
 			.length(OTP_CHARACTERS_LENGTH, OTP_CODE_MUST_HAVE_6_CHARACTERS)
 			.regex(OTP_FORMAT_REGEX, OTP_CODE_MUST_HAVE_VALID_FORMAT),
@@ -43,4 +39,4 @@ export const VerifyOtpSchema = object(
 export type SignInSchemaDto = ZodInfer<typeof SignInSchema>;
 export type SignUpSchemaDto = ZodInfer<typeof SignUpSchema>;
 
-export type VerifyOtpSchemaDto = ZodInfer<typeof VerifyOtpSchema>;
+export type VerifyOneTimePasswordDto = ZodInfer<typeof VerifyOneTimePasswordSchema>;
