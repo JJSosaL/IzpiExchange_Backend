@@ -5,10 +5,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import type { Connection, Model } from 'mongoose';
 import { match } from 'ts-pattern';
 import { ZodValidationPipe } from '#common/pipes/ZodValidation.pipe.js';
-import {
-	ACCOUNT_WITH_SAME_EMAIL_ALREADY_REGISTERED_RESPONSE,
-	EMAIL_DOMAIN_NOT_ALLOWED_RESPONSE,
-} from '#lib/Responses/Auth.js';
+import { ACCOUNT_WITH_SAME_EMAIL_ALREADY_REGISTERED_RESPONSE } from '#lib/Responses/Auth.js';
 import { NOT_FOUND_RESPONSE } from '#lib/Responses/Shared.js';
 import { EmailService } from '#modules/Email/Email.service.js';
 import { OneTimePassword } from '#root/schemas/MongoDB/OneTimePassword/OneTimePassword.js';
@@ -43,11 +40,11 @@ export class AuthController {
 	protected async handleSignIn(@Body() signInData: SignInDto) {
 		const { email } = signInData;
 
-		const isValidEmailDomain = this.emailService.isValidEmailDomain(email);
-
-		if (!isValidEmailDomain) {
-			throw EMAIL_DOMAIN_NOT_ALLOWED_RESPONSE();
-		}
+		/*
+		 * Validar que el correo electrónico proviene de un dominio permitido.
+		 * En caso contrario, se lanzará una instancia de 'HttpException'.
+		 */
+		this.emailService.validateEmailDomain(email);
 
 		const otpCode = await this.authService.generateOneTimePasswordCode({
 			action: OneTimePasswordAction.SignIn,
@@ -67,11 +64,11 @@ export class AuthController {
 	protected async handleSignUp(@Body() signUpData: SignUpDto) {
 		const { email } = signUpData;
 
-		const isValidEmailDomain = this.emailService.isValidEmailDomain(email);
-
-		if (!isValidEmailDomain) {
-			throw EMAIL_DOMAIN_NOT_ALLOWED_RESPONSE();
-		}
+		/*
+		 * Validar que el correo electrónico proviene de un dominio permitido.
+		 * En caso contrario, se lanzará una instancia de 'HttpException'.
+		 */
+		this.emailService.validateEmailDomain(email);
 
 		const otpCode = await this.authService.generateOneTimePasswordCode({
 			action: OneTimePasswordAction.SignUp,
