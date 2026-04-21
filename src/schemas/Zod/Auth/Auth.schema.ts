@@ -36,7 +36,7 @@ export const VerifyOneTimePasswordSchema = object(
 	BODY_PAYLOAD_MUST_BE_OBJECT,
 );
 
-export type SignInSchemaDto = ZodInfer<typeof SignInSchema>;
-export type SignUpSchemaDto = ZodInfer<typeof SignUpSchema>;
+export type SignInDto = ZodInfer<typeof SignInSchema>;
+export type SignUpDto = ZodInfer<typeof SignUpSchema>;
 
 export type VerifyOneTimePasswordDto = ZodInfer<typeof VerifyOneTimePasswordSchema>;
