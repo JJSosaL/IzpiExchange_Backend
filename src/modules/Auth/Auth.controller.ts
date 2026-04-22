@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto';
 import { Body, Controller, Inject, Post } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import type { Connection, Model } from 'mongoose';
 import { match } from 'ts-pattern';
@@ -8,6 +7,7 @@ import { ZodValidationPipe } from '#common/Pipes/ZodValidation.pipe.js';
 import { ACCOUNT_WITH_SAME_EMAIL_ALREADY_REGISTERED_RESPONSE } from '#lib/Responses/Auth.js';
 import { NOT_FOUND_RESPONSE } from '#lib/Responses/Shared.js';
 import { EmailService } from '#modules/Email/Email.service.js';
+import { JsonWebTokenService } from '#modules/JsonWebToken/JsonWebToken.service.js';
 import { OneTimePassword } from '#schemas/MongoDB/OneTimePassword/OneTimePassword.schema.js';
 import { OneTimePasswordAction } from '#schemas/MongoDB/OneTimePassword/OneTimePassword.types.js';
 import { User } from '#schemas/MongoDB/User/User.schema.js';
@@ -32,7 +32,7 @@ export class AuthController {
 
 		@Inject(AuthService) private readonly authService: AuthService,
 		@Inject(EmailService) private readonly emailService: EmailService,
-		@Inject(JwtService) private readonly jwtService: JwtService,
+		@Inject(JsonWebTokenService) private readonly jsonWebTokenService: JsonWebTokenService,
 	) {}
 
 	@Post('sign-in')
@@ -55,7 +55,9 @@ export class AuthController {
 			recipient: email,
 		});
 
-		return {};
+		return {
+			step: 'VERIFY_OTP',
+		};
 	}
 
 	@Post('sign-up')
@@ -78,7 +80,9 @@ export class AuthController {
 			recipient: email,
 		});
 
-		return {};
+		return {
+			step: 'VERIFY_OTP',
+		};
 	}
 
 	@Post('verify-otp')
@@ -105,11 +109,8 @@ export class AuthController {
 					throw NOT_FOUND_RESPONSE();
 				}
 
-				const { id, username } = userDocument;
-				const accessToken = await this.jwtService.signAsync({
-					userId: id,
-					username,
-				});
+				const { id } = userDocument;
+				const accessToken = await this.jsonWebTokenService.sign(id);
 
 				await this.oneTimePasswordModel.deleteOne({
 					action,
@@ -162,10 +163,7 @@ export class AuthController {
 					);
 				});
 
-				const accessToken = await this.jwtService.signAsync({
-					userId,
-					username,
-				});
+				const accessToken = await this.jsonWebTokenService.sign(userId);
 
 				return {
 					accessToken,

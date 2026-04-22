@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { EmailModule } from '#modules/Email/Email.module.js';
-import { JWT_SECRET } from '#root/config.js';
+import { JsonWebTokenModule } from '#modules/JsonWebToken/JsonWebToken.module.js';
 import {
 	OneTimePassword,
 	OneTimePasswordSchema,
@@ -17,18 +16,7 @@ import { AuthService } from './Auth.service.js';
 	],
 	imports: [
 		EmailModule,
-		JwtModule.register({
-			global: true,
-			secret: JWT_SECRET,
-			signOptions: {
-				expiresIn: '10m',
-			},
-			verifyOptions: {
-				algorithms: [
-					'HS512',
-				],
-			},
-		}),
+		JsonWebTokenModule,
 		MongooseModule.forFeature([
 			{
 				name: OneTimePassword.name,

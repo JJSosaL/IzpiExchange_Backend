@@ -70,9 +70,8 @@ export class EmailService {
 
 		await this.nodeMailer.sendMail({
 			encoding: 'utf-8',
-			from: `"IzpiExchange" <${EmailService.EMAIL_USER_NAME}>`,
+			from: `IzpiExchange <${EmailService.EMAIL_USER_NAME}>`,
 			html: oneTimePasswordHtml,
-			priority: 'normal',
 			subject: '📲 Código para Iniciar Sesión - IzpiExchange',
 			to: recipient,
 		});
@@ -87,9 +86,8 @@ export class EmailService {
 
 		await this.nodeMailer.sendMail({
 			encoding: 'utf-8',
-			from: `"IzpiExchange" <${EmailService.EMAIL_USER_NAME}>`,
+			from: `IzpiExchange <${EmailService.EMAIL_USER_NAME}>`,
 			html: oneTimePasswordHtml,
-			priority: 'normal',
 			subject: '✅ Código de Verificación - IzpiExchange',
 			to: recipient,
 		});
