@@ -8,5 +8,5 @@ export const USER_MUST_HAVE_HIGHER_BALANCE_THAN_PRICE_RESPONSE = (): HttpExcepti
 			message:
 				'Se debe tener una cantidad de créditos superior para publicar un producto con este precio',
 		},
-		statusCode: HttpStatus.BAD_REQUEST,
+		statusCode: HttpStatus.FORBIDDEN,
 	});
