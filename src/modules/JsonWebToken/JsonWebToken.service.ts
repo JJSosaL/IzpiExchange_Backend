@@ -14,7 +14,7 @@ export class JsonWebTokenService {
 		});
 	}
 
-	public async verify(request: Request): Promise<JsonWebTokenPayload> {
+	public async verify(request: Request): Promise<string> {
 		const authorizationHeader = request.get('Authorization') ?? '';
 		const authorizationPayload = await this.jwtService
 			.verifyAsync<JsonWebTokenPayload>(authorizationHeader)
@@ -24,6 +24,8 @@ export class JsonWebTokenService {
 			throw UNAUTHORIZED_RESPONSE();
 		}
 
-		return authorizationPayload;
+		const { userId } = authorizationPayload;
+
+		return userId;
 	}
 }
