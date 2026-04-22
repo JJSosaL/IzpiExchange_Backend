@@ -95,7 +95,7 @@ export class AuthController {
 
 		const { email } = oneTimePasswordDocument;
 
-		match(action)
+		return match(action)
 			.with(OneTimePasswordAction.SignIn, async () => {
 				const userDocument = await this.userModel.findOne({
 					email,
