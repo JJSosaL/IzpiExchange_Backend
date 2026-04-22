@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { Body, Controller, Inject, Post, UsePipes } from '@nestjs/common';
+import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import type { Connection, Model } from 'mongoose';
@@ -36,8 +36,7 @@ export class AuthController {
 	) {}
 
 	@Post('sign-in')
-	@UsePipes(new ZodValidationPipe(SignInSchema))
-	protected async handleSignIn(@Body() signInData: SignInDto) {
+	protected async handleSignIn(@Body(new ZodValidationPipe(SignInSchema)) signInData: SignInDto) {
 		const { email } = signInData;
 
 		/*
@@ -60,8 +59,7 @@ export class AuthController {
 	}
 
 	@Post('sign-up')
-	@UsePipes(new ZodValidationPipe(SignUpSchema))
-	protected async handleSignUp(@Body() signUpData: SignUpDto) {
+	protected async handleSignUp(@Body(new ZodValidationPipe(SignUpSchema)) signUpData: SignUpDto) {
 		const { email } = signUpData;
 
 		/*
@@ -84,8 +82,10 @@ export class AuthController {
 	}
 
 	@Post('verify-otp')
-	@UsePipes(new ZodValidationPipe(VerifyOneTimePasswordSchema))
-	protected async verifySignUpOtp(@Body() verifyOtpData: VerifyOneTimePasswordDto) {
+	protected async verifySignUpOtp(
+		@Body(new ZodValidationPipe(VerifyOneTimePasswordSchema))
+		verifyOtpData: VerifyOneTimePasswordDto,
+	) {
 		const { action, otpCode } = verifyOtpData;
 
 		const oneTimePasswordDocument = await this.authService.getOneTimePassword({
