@@ -1,8 +1,12 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { JWT_AUDIENCE, JWT_ISSUER, JWT_SECRET } from '#root/config.js';
+import { JsonWebTokenService } from './JsonWebToken.service.js';
 
 @Module({
+	exports: [
+		JsonWebTokenService,
+	],
 	imports: [
 		JwtModule.register({
 			global: true,
@@ -21,6 +25,9 @@ import { JWT_AUDIENCE, JWT_ISSUER, JWT_SECRET } from '#root/config.js';
 				issuer: JWT_ISSUER,
 			},
 		}),
+	],
+	providers: [
+		JsonWebTokenService,
 	],
 })
 export class JsonWebTokenModule {}
