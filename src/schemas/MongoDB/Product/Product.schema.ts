@@ -32,6 +32,7 @@ export class Product {
 	declare publisherId: string;
 
 	@Prop({
+		default: ProductStatus.Pending,
 		enum: ProductStatus,
 		required: true,
 	})
