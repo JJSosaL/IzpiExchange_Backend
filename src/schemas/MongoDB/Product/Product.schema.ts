@@ -1,4 +1,4 @@
-import { Prop, Schema } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ProductStatus } from './Product.types.js';
 
 @Schema({
@@ -37,3 +37,5 @@ export class Product {
 	})
 	declare status: ProductStatus;
 }
+
+export const ProductSchema = SchemaFactory.createForClass(Product);
