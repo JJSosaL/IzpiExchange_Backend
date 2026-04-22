@@ -8,3 +8,9 @@ export enum OneTimePasswordAction {
 	SignIn = 'SIGN_IN',
 	SignUp = 'SIGN_UP',
 }
+
+export enum OneTimePasswordStatus {
+	Consumed = 'CONSUMED',
+	Pending = 'PENDING',
+	Verified = 'VERIFIED',
+}

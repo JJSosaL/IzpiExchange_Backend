@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory, Virtual } from '@nestjs/mongoose';
-import { OneTimePasswordAction } from './OneTimePassword.types.js';
+import { OneTimePasswordAction, OneTimePasswordStatus } from './OneTimePassword.types.js';
 
 @Schema({
 	timestamps: true,
@@ -34,6 +34,13 @@ export class OneTimePassword {
 		unique: true,
 	})
 	declare otpCode: string;
+
+	@Prop({
+		default: OneTimePasswordStatus.Pending,
+		enum: OneTimePasswordStatus,
+		required: true,
+	})
+	declare status: OneTimePasswordStatus;
 }
 
 export const OneTimePasswordSchema = SchemaFactory.createForClass(OneTimePassword);
