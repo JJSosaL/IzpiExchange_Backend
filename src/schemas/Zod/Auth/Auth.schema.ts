@@ -14,14 +14,14 @@ const OTP_FORMAT_REGEX = /^\d+$/;
 
 export const SignInSchema = object(
 	{
-		email: email(EMAIL_MUST_HAVE_VALID_FORMAT),
+		email: email(EMAIL_MUST_HAVE_VALID_FORMAT).toLowerCase(),
 	},
 	BODY_PAYLOAD_MUST_BE_OBJECT,
 );
 
 export const SignUpSchema = object(
 	{
-		email: email(EMAIL_MUST_HAVE_VALID_FORMAT),
+		email: email(EMAIL_MUST_HAVE_VALID_FORMAT).toLowerCase(),
 	},
 	BODY_PAYLOAD_MUST_BE_OBJECT,
 );
