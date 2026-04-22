@@ -19,6 +19,15 @@ export const NOT_FOUND_RESPONSE = (): HttpException =>
 		statusCode: HttpStatus.NOT_FOUND,
 	});
 
+export const UNAUTHORIZED_RESPONSE = (): HttpException =>
+	buildHttpException({
+		data: {
+			code: 'UNAUTHORIZED',
+			message: '401: No Autorizado',
+		},
+		statusCode: HttpStatus.UNAUTHORIZED,
+	});
+
 export const ZOD_VALIDATION_ERROR_RESPONSE = (zodIssueMessage: string): HttpException =>
 	buildHttpException({
 		data: {
