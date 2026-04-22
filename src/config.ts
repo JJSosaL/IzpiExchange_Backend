@@ -39,6 +39,16 @@ export const EMAIL_USER_NAME = getEnvironmentVariable('EMAIL_USER_NAME');
 export const EMAIL_USER_TOKEN = getEnvironmentVariable('EMAIL_USER_TOKEN');
 
 /**
+ * El nombre de la entidad donde se permite utilizar el JSON Web Token.
+ */
+export const JWT_AUDIENCE = getEnvironmentVariable('JWT_AUDIENCE');
+
+/**
+ * El nombre de la entidad que firmó el JSON Web Token.
+ */
+export const JWT_ISSUER = getEnvironmentVariable('JWT_ISSUER');
+
+/**
  * El secreto que se utilizará para validar y firmar JSON Web Tokens.
  */
 export const JWT_SECRET = getEnvironmentVariable('JWT_SECRET');
