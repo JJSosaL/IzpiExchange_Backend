@@ -1,32 +1,26 @@
-import { HttpStatus, Injectable, type PipeTransform } from '@nestjs/common';
-import type { ZodType } from 'zod';
-import { buildHttpException } from '#root/utils/Responses/buildHttpException.js';
+import { Injectable, type PipeTransform } from '@nestjs/common';
+import { ZodError, type ZodType } from 'zod';
+import {
+	INTERNAL_SERVER_ERROR_RESPONSE,
+	ZOD_VALIDATION_ERROR_RESPONSE,
+} from '#lib/Responses/Shared.js';
 
 @Injectable()
 export class ZodValidationPipe implements PipeTransform {
-	public constructor(private readonly zodSchema: ZodType) {
-		this.zodSchema = zodSchema;
-	}
+	public constructor(private readonly zodSchema: ZodType) {}
 
 	public transform(value: unknown) {
-		const result = this.zodSchema.safeParse(value);
-		const { success, data } = result;
+		try {
+			return this.zodSchema.parse(value);
+		} catch (exception) {
+			if (exception instanceof ZodError) {
+				const { issues } = exception;
+				const { message } = issues[0];
 
-		if (!success) {
-			const { error } = result;
-			const { issues } = error;
+				throw ZOD_VALIDATION_ERROR_RESPONSE(message);
+			}
 
-			const message = issues[0].message;
-
-			throw buildHttpException({
-				data: {
-					code: 'INPUT_DATA_VALIDATION_FAILED',
-					message,
-				},
-				statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-			});
+			throw INTERNAL_SERVER_ERROR_RESPONSE();
 		}
-
-		return data;
 	}
 }
