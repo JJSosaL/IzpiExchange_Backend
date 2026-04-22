@@ -170,6 +170,7 @@ export class AuthController {
 				return {
 					accessToken,
 				};
-			});
+			})
+			.run();
 	}
 }
