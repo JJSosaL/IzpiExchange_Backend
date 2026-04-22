@@ -6,7 +6,7 @@ import { JWT_SECRET } from '#root/config.js';
 import {
 	OneTimePassword,
 	OneTimePasswordSchema,
-} from '#schemas/MongoDB/OneTimePassword/OneTimePassword.js';
+} from '#schemas/MongoDB/OneTimePassword/OneTimePassword.schema.js';
 import { User, UserSchema } from '#schemas/MongoDB/User/User.schema.js';
 import { AuthController } from './Auth.controller.js';
 import { AuthService } from './Auth.service.js';

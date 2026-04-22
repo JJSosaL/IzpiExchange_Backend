@@ -1,5 +1,5 @@
 import type { HydratedDocument } from 'mongoose';
-import type { OneTimePassword } from './OneTimePassword.js';
+import type { OneTimePassword } from './OneTimePassword.schema.js';
 
 export type OneTimePasswordDocument = HydratedDocument<OneTimePassword>;
 

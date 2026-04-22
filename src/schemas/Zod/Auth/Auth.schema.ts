@@ -1,5 +1,5 @@
 import { email, enum as enum_, object, string, type infer as ZodInfer } from 'zod';
-import { OneTimePasswordAction } from '#root/schemas/MongoDB/OneTimePassword/OneTimePassword.types.js';
+import { OneTimePasswordAction } from '#schemas/MongoDB/OneTimePassword/OneTimePassword.types.js';
 import { BODY_PAYLOAD_MUST_BE_OBJECT } from '../Shared/Shared.messages.js';
 import {
 	EMAIL_MUST_HAVE_VALID_FORMAT,

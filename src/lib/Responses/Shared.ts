@@ -1,5 +1,5 @@
 import { type HttpException, HttpStatus } from '@nestjs/common';
-import { buildHttpException } from '#root/utils/Responses/buildHttpException.js';
+import { buildHttpException } from '#utils/Responses/buildHttpException.js';
 
 export const INTERNAL_SERVER_ERROR = (): HttpException =>
 	buildHttpException({

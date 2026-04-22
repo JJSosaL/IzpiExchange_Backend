@@ -1,5 +1,5 @@
 import { type HttpException, HttpStatus } from '@nestjs/common';
-import { buildHttpException } from '#root/utils/Responses/buildHttpException.js';
+import { buildHttpException } from '#utils/Responses/buildHttpException.js';
 
 export const ACCOUNT_WITH_SAME_EMAIL_ALREADY_REGISTERED_RESPONSE = (): HttpException =>
 	buildHttpException({

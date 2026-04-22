@@ -8,8 +8,8 @@ import { ZodValidationPipe } from '#common/pipes/ZodValidation.pipe.js';
 import { ACCOUNT_WITH_SAME_EMAIL_ALREADY_REGISTERED_RESPONSE } from '#lib/Responses/Auth.js';
 import { NOT_FOUND_RESPONSE } from '#lib/Responses/Shared.js';
 import { EmailService } from '#modules/Email/Email.service.js';
-import { OneTimePassword } from '#root/schemas/MongoDB/OneTimePassword/OneTimePassword.js';
-import { OneTimePasswordAction } from '#root/schemas/MongoDB/OneTimePassword/OneTimePassword.types.js';
+import { OneTimePassword } from '#schemas/MongoDB/OneTimePassword/OneTimePassword.schema.js';
+import { OneTimePasswordAction } from '#schemas/MongoDB/OneTimePassword/OneTimePassword.types.js';
 import { User } from '#schemas/MongoDB/User/User.schema.js';
 import {
 	type SignInDto,
