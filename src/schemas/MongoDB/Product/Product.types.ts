@@ -5,6 +5,6 @@ export type ProductDocument = HydratedDocument<Product>;
 export type ProductModel = Model<Product>;
 
 export enum ProductStatus {
-	Approved = 'APPROVED',
 	Pending = 'PENDING',
+	Published = 'PUBLISHED',
 }
