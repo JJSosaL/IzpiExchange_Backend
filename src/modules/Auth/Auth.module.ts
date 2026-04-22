@@ -31,14 +31,12 @@ import { AuthService } from './Auth.service.js';
 		}),
 		MongooseModule.forFeature([
 			{
-				name: User.name,
-				schema: UserSchema,
-			},
-		]),
-		MongooseModule.forFeature([
-			{
 				name: OneTimePassword.name,
 				schema: OneTimePasswordSchema,
+			},
+			{
+				name: User.name,
+				schema: UserSchema,
 			},
 		]),
 	],
