@@ -29,6 +29,10 @@ export class ProductsController {
 			.find({
 				status: ProductStatus.Published,
 			})
+			// Ordenamos los productos por orden de 'actualizado recientemente'.
+			.sort({
+				updatedAt: -1,
+			})
 			// Excluimos los campos por defecto de MongoDB.
 			.select('-_id -__v')
 			// Excluimos los campos que no son necesarios.
