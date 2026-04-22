@@ -61,6 +61,21 @@ export class EmailService {
 		return handlebarsTemplate;
 	}
 
+	public parseEmail(email: string): EmailData {
+		const emailData = emailAddresses.parseOneAddress(email) as ParsedMailbox | null;
+
+		if (!emailData) {
+			throw new TypeError(`Formato de correo eletrónico no válido: ${email}`);
+		}
+
+		const { domain, local } = emailData;
+
+		return {
+			domain,
+			username: local,
+		};
+	}
+
 	public async sendSignInMail(options: SendSignInMailOptions): Promise<void> {
 		const { recipient } = options;
 		const oneTimePasswordHtml = this.createOneTimePasswordMail(
@@ -91,21 +106,6 @@ export class EmailService {
 			subject: '✅ Código de Verificación - IzpiExchange',
 			to: recipient,
 		});
-	}
-
-	public parseEmail(email: string): EmailData {
-		const emailData = emailAddresses.parseOneAddress(email) as ParsedMailbox | null;
-
-		if (!emailData) {
-			throw new TypeError(`Formato de correo eletrónico no válido: ${email}`);
-		}
-
-		const { domain, local } = emailData;
-
-		return {
-			domain,
-			username: local,
-		};
 	}
 
 	public validateEmailDomain(email: string): void {
