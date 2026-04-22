@@ -9,7 +9,7 @@ import {
 export class ZodValidationPipe implements PipeTransform {
 	public constructor(private readonly zodSchema: ZodType) {}
 
-	public transform(value: unknown) {
+	public transform(value: unknown): unknown {
 		try {
 			return this.zodSchema.parse(value);
 		} catch (exception) {
