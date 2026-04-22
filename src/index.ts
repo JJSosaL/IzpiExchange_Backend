@@ -3,6 +3,7 @@ import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '#modules/App.module.js';
 import { APP_PORT } from './config.js';
+import type { UserDocument } from './schemas/MongoDB/User/User.types.js';
 
 const app = await NestFactory.create(AppModule);
 
@@ -10,3 +11,9 @@ const app = await NestFactory.create(AppModule);
 app.setGlobalPrefix('api');
 
 await app.listen(APP_PORT);
+
+declare module 'express' {
+	interface Request {
+		user: UserDocument;
+	}
+}
