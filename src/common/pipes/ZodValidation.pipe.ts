@@ -1,5 +1,6 @@
-import { HttpException, HttpStatus, Injectable, type PipeTransform } from '@nestjs/common';
+import { HttpStatus, Injectable, type PipeTransform } from '@nestjs/common';
 import type { ZodType } from 'zod';
+import { buildHttpException } from '#root/utils/Responses/buildHttpException.js';
 
 @Injectable()
 export class ZodValidationPipe implements PipeTransform {
@@ -17,7 +18,13 @@ export class ZodValidationPipe implements PipeTransform {
 
 			const message = issues[0].message;
 
-			throw new HttpException(message, HttpStatus.UNPROCESSABLE_ENTITY);
+			throw buildHttpException({
+				data: {
+					code: 'INPUT_DATA_VALIDATION_FAILED',
+					message,
+				},
+				statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+			});
 		}
 
 		return data;
