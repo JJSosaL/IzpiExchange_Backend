@@ -5,7 +5,6 @@ import { Injectable } from '@nestjs/common';
 import emailAddresses, { type ParsedMailbox } from 'email-addresses';
 import Handlebars from 'handlebars';
 import { createTransport, type Transporter } from 'nodemailer';
-import { EMAIL_DOMAIN_NOT_ALLOWED_RESPONSE } from '#lib/Responses/Auth.js';
 import {
 	ALLOWED_EMAIL_DOMAIN,
 	EMAIL_HOST_NAME,
@@ -61,6 +60,12 @@ export class EmailService {
 		return handlebarsTemplate;
 	}
 
+	public isValidEmailDomain(email: string): boolean {
+		const { domain } = this.parseEmail(email);
+
+		return domain === ALLOWED_EMAIL_DOMAIN;
+	}
+
 	public parseEmail(email: string): EmailData {
 		const emailData = emailAddresses.parseOneAddress(email) as ParsedMailbox | null;
 
@@ -106,14 +111,6 @@ export class EmailService {
 			subject: '✅ Código de Verificación - IzpiExchange',
 			to: recipient,
 		});
-	}
-
-	public validateEmailDomain(email: string): void {
-		const { domain } = this.parseEmail(email);
-
-		if (domain !== ALLOWED_EMAIL_DOMAIN) {
-			throw EMAIL_DOMAIN_NOT_ALLOWED_RESPONSE();
-		}
 	}
 }
 
