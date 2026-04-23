@@ -24,7 +24,24 @@ export class ProductsController {
 	) {}
 
 	@Get()
-	protected async handleGet() {
+	protected async getOwnProducts(@User() userDocument: UserDocument) {
+		const { id } = userDocument;
+
+		return await this.productModel
+			.find({
+				publisherId: id,
+			}) // Ordenamos los productos por orden de 'actualizado recientemente'.
+			.sort({
+				updatedAt: -1,
+			})
+			.select({
+				__v: false,
+				_id: false,
+			});
+	}
+
+	@Get('published')
+	protected async getPublishedProducts() {
 		return await this.productModel
 			.find({
 				status: ProductStatus.Published,
@@ -33,14 +50,14 @@ export class ProductsController {
 			.sort({
 				updatedAt: -1,
 			})
-			// Excluimos los campos por defecto de MongoDB.
-			.select('-_id -__v')
-			// Excluimos los campos que no son necesarios.
-			.select('-createdAt -status -updatedAt');
+			.select({
+				__v: false,
+				_id: false,
+			});
 	}
 
 	@Post('publish')
-	protected async handlePublish(
+	protected async publishProduct(
 		@Body(new ZodValidationPipe(ProductCreateSchema)) productCreateData: ProductCreateDto,
 		@User() userDocument: UserDocument,
 	) {
