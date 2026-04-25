@@ -8,23 +8,31 @@ import type { JsonWebTokenPayload } from '#lib/Types/JsonWebToken.js';
 export class JsonWebTokenService {
 	public constructor(@Inject(JwtService) private readonly jwtService: JwtService) {}
 
+	private getAccessToken(requestOrAccessToken: Request | string): string {
+		if (typeof requestOrAccessToken === 'string') {
+			return requestOrAccessToken;
+		}
+
+		return requestOrAccessToken.get('Authorization') ?? '';
+	}
+
 	public async sign(userId: string): Promise<string> {
 		return await this.jwtService.signAsync({
 			userId,
 		});
 	}
 
-	public async verify(request: Request): Promise<string> {
-		const authorizationHeader = request.get('Authorization') ?? '';
-		const authorizationPayload = await this.jwtService
-			.verifyAsync<JsonWebTokenPayload>(authorizationHeader)
+	public async verify(requestOrAccessToken: Request | string): Promise<string> {
+		const accessToken = this.getAccessToken(requestOrAccessToken);
+		const accessTokenPayload = await this.jwtService
+			.verifyAsync<JsonWebTokenPayload>(accessToken)
 			.catch(() => null);
 
-		if (!authorizationPayload) {
+		if (!accessTokenPayload) {
 			throw UNAUTHORIZED_RESPONSE();
 		}
 
-		const { userId } = authorizationPayload;
+		const { userId } = accessTokenPayload;
 
 		return userId;
 	}

@@ -53,6 +53,9 @@ importers:
       nodemailer:
         specifier: 8.0.5
         version: 8.0.5
+      socket.io:
+        specifier: 4.8.3
+        version: 4.8.3
       ts-pattern:
         specifier: 5.9.0
         version: 5.9.0
