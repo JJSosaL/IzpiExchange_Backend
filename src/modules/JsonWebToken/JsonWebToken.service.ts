@@ -22,13 +22,27 @@ export class JsonWebTokenService {
 		});
 	}
 
-	public async verify(requestOrAccessToken: Request | string): Promise<string> {
+	public async verify(
+		requestOrAccessToken: Request | string,
+		shouldThrow?: false,
+	): Promise<string | null>;
+
+	public async verify(requestOrAccessToken: Request | string, shouldThrow: true): Promise<string>;
+
+	public async verify(
+		requestOrAccessToken: Request | string,
+		shouldThrow?: boolean,
+	): Promise<string | null> {
 		const accessToken = this.getAccessToken(requestOrAccessToken);
 		const accessTokenPayload = await this.jwtService
 			.verifyAsync<JsonWebTokenPayload>(accessToken)
 			.catch(() => null);
 
 		if (!accessTokenPayload) {
+			if (!shouldThrow) {
+				return null;
+			}
+
 			throw UNAUTHORIZED_RESPONSE();
 		}
 
