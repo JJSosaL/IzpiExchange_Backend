@@ -3,7 +3,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { MONGO_DB_CONNECTION_URL, MONGO_DB_DATABASE_NAME } from '#root/config.js';
 import { AuthModule } from './Auth/Auth.module.js';
 import { ProductsModule } from './Products/Products.module.js';
-import { RealTimeModule } from './RealTime/RealTime.module.js';
 import { UsersModule } from './Users/Users.module.js';
 
 @Module({
@@ -13,7 +12,6 @@ import { UsersModule } from './Users/Users.module.js';
 			dbName: MONGO_DB_DATABASE_NAME,
 		}),
 		ProductsModule,
-		RealTimeModule,
 		UsersModule,
 	],
 })

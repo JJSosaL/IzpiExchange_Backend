@@ -17,3 +17,11 @@ declare module 'express' {
 		user: UserDocument;
 	}
 }
+
+declare module 'socket.io' {
+	interface Client {
+		data: {
+			user: UserDocument;
+		};
+	}
+}
