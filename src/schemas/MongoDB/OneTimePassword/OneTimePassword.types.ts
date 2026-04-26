@@ -1,7 +1,9 @@
 import type { HydratedDocument, Model } from 'mongoose';
+import type { Properties } from '#lib/Types/Util.js';
 import type { OneTimePassword } from './OneTimePassword.schema.js';
 
 export type OneTimePasswordDocument = HydratedDocument<OneTimePassword>;
+export type OneTimePasswordDto = Properties<OneTimePassword>;
 export type OneTimePasswordModel = Model<OneTimePassword>;
 
 export enum OneTimePasswordAction {
