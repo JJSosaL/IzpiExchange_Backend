@@ -77,7 +77,6 @@ export class ProductsController {
 			.find({
 				status: ProductStatus.Published,
 			})
-			// Ordenamos los productos por orden de 'actualizado recientemente'.
 			.sort({
 				updatedAt: -1,
 			})
@@ -94,7 +93,7 @@ export class ProductsController {
 		return await this.productModel
 			.find({
 				publisherId: id,
-			}) // Ordenamos los productos por orden de 'actualizado recientemente'.
+			})
 			.sort({
 				updatedAt: -1,
 			})
