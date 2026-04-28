@@ -14,12 +14,14 @@ export class OneTimePassword {
 
 	@Prop({
 		required: true,
+		type: String,
 	})
 	declare email: string;
 
 	@Prop({
 		expires: 0,
 		required: true,
+		type: Number,
 	})
 	declare expiresIn: Date;
 
@@ -32,6 +34,7 @@ export class OneTimePassword {
 
 	@Prop({
 		required: true,
+		type: String,
 		unique: true,
 	})
 	declare otpCode: string;
@@ -40,6 +43,7 @@ export class OneTimePassword {
 		default: OneTimePasswordStatus.Pending,
 		enum: OneTimePasswordStatus,
 		required: true,
+		type: OneTimePasswordStatus,
 	})
 	declare status: OneTimePasswordStatus;
 }

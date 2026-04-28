@@ -8,16 +8,19 @@ export class User {
 	@Prop({
 		default: 100,
 		required: true,
+		type: Number,
 	})
 	declare credits: number;
 
 	@Prop({
 		required: true,
+		type: String,
 	})
 	declare email: string;
 
 	@Prop({
 		required: true,
+		type: String,
 		unique: true,
 	})
 	declare id: string;
@@ -26,11 +29,13 @@ export class User {
 		default: UserRole.Normal,
 		enum: UserRole,
 		required: true,
+		type: UserRole,
 	})
 	declare role: UserRole;
 
 	@Prop({
 		required: true,
+		type: String,
 	})
 	declare username: string;
 }

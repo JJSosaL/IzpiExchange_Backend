@@ -7,27 +7,32 @@ import { ProductStatus } from './Product.types.js';
 export class Product {
 	@Prop({
 		required: true,
+		type: String,
 	})
 	declare description: string;
 
 	@Prop({
 		required: true,
+		type: String,
 		unique: true,
 	})
 	declare id: string;
 
 	@Prop({
 		required: true,
+		type: String,
 	})
 	declare name: string;
 
 	@Prop({
 		required: true,
+		type: Number,
 	})
 	declare price: number;
 
 	@Prop({
 		required: true,
+		type: String,
 	})
 	declare publisherId: string;
 
@@ -35,6 +40,7 @@ export class Product {
 		default: ProductStatus.Pending,
 		enum: ProductStatus,
 		required: true,
+		type: ProductStatus,
 	})
 	declare status: ProductStatus;
 }
