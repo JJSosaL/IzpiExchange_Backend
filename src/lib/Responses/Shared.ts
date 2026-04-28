@@ -1,6 +1,15 @@
 import { type HttpException, HttpStatus } from '@nestjs/common';
 import { buildHttpException } from '#utils/Responses/buildHttpException.js';
 
+export const FORBIDDEN_RESPONSE = (): HttpException =>
+	buildHttpException({
+		data: {
+			code: 'FORBIDDEN',
+			message: '403: Prohibido',
+		},
+		statusCode: HttpStatus.FORBIDDEN,
+	});
+
 export const INTERNAL_SERVER_ERROR_RESPONSE = (): HttpException =>
 	buildHttpException({
 		data: {

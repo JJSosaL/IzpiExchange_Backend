@@ -7,6 +7,7 @@ export type ProductDto = Properties<Product>;
 export type ProductModel = Model<Product>;
 
 export enum ProductStatus {
+	Denied = 'DENIED',
 	Pending = 'PENDING',
 	Published = 'PUBLISHED',
 }

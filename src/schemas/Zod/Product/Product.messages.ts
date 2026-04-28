@@ -16,3 +16,6 @@ export const PRODUCT_PRICE_MUST_BE_INTEGER =
 	'El precio del producto debe ser un número entero' as const;
 export const PRODUCT_PRICE_MUST_BE_POSITIVE =
 	'El precio del producto debe ser un número positivo' as const;
+
+export const PRODUCT_STATUS_MUST_BE_ENUM =
+	'El estado del producto debe ser una enumeración' as const;
