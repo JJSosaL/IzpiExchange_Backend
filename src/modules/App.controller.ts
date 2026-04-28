@@ -18,7 +18,7 @@ export class AppController {
 		const { version: pkgVersion } = pkg;
 
 		return {
-			mustUpgrade: semver.gt(pkgVersion, version),
+			shouldUpgrade: semver.gt(pkgVersion, version),
 		};
 	}
 }
