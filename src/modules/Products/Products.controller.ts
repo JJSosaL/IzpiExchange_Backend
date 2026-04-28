@@ -1,20 +1,27 @@
 import { randomUUID } from 'node:crypto';
-import { Body, Controller, Get, Inject, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '#common/Decorators/User.decorator.js';
 import { AuthGuard } from '#common/Guards/Auth.guard.js';
 import { ZodValidationPipe } from '#common/Pipes/ZodValidation.pipe.js';
 import { USER_MUST_HAVE_HIGHER_BALANCE_THAN_PRICE_RESPONSE } from '#lib/Responses/Products.js';
-import { INTERNAL_SERVER_ERROR_RESPONSE, NOT_FOUND_RESPONSE } from '#lib/Responses/Shared.js';
+import {
+	FORBIDDEN_RESPONSE,
+	INTERNAL_SERVER_ERROR_RESPONSE,
+	NOT_FOUND_RESPONSE,
+	UNPROCESSABLE_ENTITY_RESPONSE,
+} from '#lib/Responses/Shared.js';
 import { GatewayEventName, RealTimeGateway } from '#modules/RealTime/RealTime.gateway.js';
 import { UsersService } from '#modules/Users/Users.service.js';
-import {
-	type ProductCreateDto,
-	ProductCreateSchema,
-} from '#root/schemas/Zod/Product/Product.schema.js';
 import { Product } from '#schemas/MongoDB/Product/Product.schema.js';
 import { type ProductModel, ProductStatus } from '#schemas/MongoDB/Product/Product.types.js';
 import { type UserDocument, UserRole } from '#schemas/MongoDB/User/User.types.js';
+import {
+	type ProductCreateDto,
+	ProductCreateSchema,
+	type ProductStatusUpdateDto,
+	ProductStatusUpdateSchema,
+} from '#schemas/Zod/Product/Product.schema.js';
 
 @Controller('products')
 @UseGuards(AuthGuard)
@@ -66,9 +73,7 @@ export class ProductsController {
 			UserRole.Manager,
 		);
 
-		return {
-			success: true,
-		};
+		return productDocument;
 	}
 
 	@Get()
@@ -105,7 +110,7 @@ export class ProductsController {
 
 	@Get(':productId')
 	protected async getProduct(@Param('productId') productId: string) {
-		const product = await this.productModel
+		const productDocument = await this.productModel
 			.findOne({
 				id: productId,
 			})
@@ -114,10 +119,55 @@ export class ProductsController {
 				_id: false,
 			});
 
-		if (!product) {
+		if (!productDocument) {
 			throw NOT_FOUND_RESPONSE();
 		}
 
-		return product;
+		return productDocument;
+	}
+
+	@Patch(':productId/status')
+	protected async updateProductStatus(
+		@Body(new ZodValidationPipe(ProductStatusUpdateSchema))
+		productStatusUpdateData: ProductStatusUpdateDto,
+		@Param('productId') productId: string,
+		@User() userDocument: UserDocument,
+	) {
+		const { status } = productStatusUpdateData;
+		const { role } = userDocument;
+
+		if (role !== UserRole.Manager) {
+			throw FORBIDDEN_RESPONSE();
+		}
+
+		if (status === ProductStatus.Pending) {
+			throw UNPROCESSABLE_ENTITY_RESPONSE();
+		}
+
+		const productDocument = await this.productModel.findOneAndUpdate(
+			{
+				id: productId,
+			},
+			{
+				status,
+			},
+			{
+				projection: {
+					__v: false,
+					_id: false,
+				},
+				returnDocument: 'after',
+			},
+		);
+
+		if (!productDocument) {
+			throw NOT_FOUND_RESPONSE();
+		}
+
+		if (status === ProductStatus.Published) {
+			this.realTimeGateway.broadcast(GatewayEventName.ProductPublished, productDocument);
+		}
+
+		return productDocument;
 	}
 }
