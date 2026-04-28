@@ -8,7 +8,7 @@ export class OneTimePassword {
 	@Prop({
 		enum: OneTimePasswordAction,
 		required: true,
-		type: OneTimePasswordAction,
+		type: String,
 	})
 	declare action: OneTimePasswordAction;
 
@@ -43,7 +43,7 @@ export class OneTimePassword {
 		default: OneTimePasswordStatus.Pending,
 		enum: OneTimePasswordStatus,
 		required: true,
-		type: OneTimePasswordStatus,
+		type: String,
 	})
 	declare status: OneTimePasswordStatus;
 }

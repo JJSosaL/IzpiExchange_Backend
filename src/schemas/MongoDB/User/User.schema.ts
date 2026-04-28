@@ -29,7 +29,7 @@ export class User {
 		default: UserRole.Normal,
 		enum: UserRole,
 		required: true,
-		type: UserRole,
+		type: String,
 	})
 	declare role: UserRole;
 

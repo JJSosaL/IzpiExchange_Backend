@@ -40,7 +40,7 @@ export class Product {
 		default: ProductStatus.Pending,
 		enum: ProductStatus,
 		required: true,
-		type: ProductStatus,
+		type: String,
 	})
 	declare status: ProductStatus;
 }
