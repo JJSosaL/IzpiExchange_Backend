@@ -8,6 +8,7 @@ export class OneTimePassword {
 	@Prop({
 		enum: OneTimePasswordAction,
 		required: true,
+		type: OneTimePasswordAction,
 	})
 	declare action: OneTimePasswordAction;
 
