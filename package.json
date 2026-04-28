@@ -49,6 +49,8 @@
 		"biome:check": "biome check",
 		"biome:ci": "biome ci",
 		"biome:write": "biome check --write",
+		"docker:build": "docker build --tag backend --file Dockerfile .",
+		"docker:run": "docker run -d -p 3001:3001 backend",
 		"nest:build": "nest build",
 		"nest:dev": "nest start --watch",
 		"nest:start": "node dist/index.js",
