@@ -8,13 +8,13 @@ import {
 import type { Server, Socket } from 'socket.io';
 import { JsonWebTokenService } from '#modules/JsonWebToken/JsonWebToken.service.js';
 import { UsersService } from '#modules/Users/Users.service.js';
-import type { Product } from '#schemas/MongoDB/Product/Product.schema.js';
 import type { UserRole } from '#schemas/MongoDB/User/User.types.js';
 
 @WebSocketGateway({
 	cors: {
 		origin: '*',
 	},
+	namespace: 'gateway',
 })
 export class RealTimeGateway implements OnGatewayConnection {
 	@WebSocketServer()
@@ -27,7 +27,7 @@ export class RealTimeGateway implements OnGatewayConnection {
 
 	broadcast<GatewayEvent extends GatewayEventName>(
 		event: GatewayEvent,
-		payload: GatewayEventPayloadData[GatewayEvent],
+		payload: unknown,
 		role?: UserRole,
 	): void {
 		const { server } = this;
@@ -48,14 +48,18 @@ export class RealTimeGateway implements OnGatewayConnection {
 		const { accessToken } = auth;
 
 		if (!accessToken) {
-			return client.disconnect(true);
+			return client.emit(GatewayEventName.AuthenticationFailed, null, () =>
+				client.disconnect(true),
+			);
 		}
 
 		const userId = await this.jsonWebTokenService.verify(accessToken, false);
 		const userDocument = await this.usersService.get(userId ?? '');
 
 		if (!userDocument) {
-			return client.disconnect(true);
+			return client.emit(GatewayEventName.AuthenticationFailed, null, () =>
+				client.disconnect(true),
+			);
 		}
 
 		const { role } = userDocument;
@@ -67,12 +71,8 @@ export class RealTimeGateway implements OnGatewayConnection {
 	}
 }
 
-type GatewayEventPayloadData = {
-	[GatewayEventName.ProductCreated]: Product;
-	[GatewayEventName.ProductPublished]: Product;
-};
-
 export enum GatewayEventName {
+	AuthenticationFailed = 'AUTHENTICATION_FAILED',
 	ProductCreated = 'PRODUCT_CREATED',
 	ProductPublished = 'PRODUCT_PUBLISHED',
 }
