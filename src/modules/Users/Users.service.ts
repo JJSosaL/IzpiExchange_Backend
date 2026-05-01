@@ -29,10 +29,6 @@ export class UsersService {
 		return await this.updateUserCredits(userId, -amount);
 	}
 
-	public async incrementCredits(userId: string, amount: number): Promise<boolean> {
-		return await this.updateUserCredits(userId, amount);
-	}
-
 	public async getUser(userId: string, throwUnauthorized?: false): Promise<UserDocument | null>;
 	public async getUser(userId: string, throwUnauthorized: true): Promise<UserDocument>;
 
@@ -54,5 +50,9 @@ export class UsersService {
 				return null;
 			})
 			.otherwise((userDocument) => userDocument);
+	}
+
+	public async incrementCredits(userId: string, amount: number): Promise<boolean> {
+		return await this.updateUserCredits(userId, amount);
 	}
 }
