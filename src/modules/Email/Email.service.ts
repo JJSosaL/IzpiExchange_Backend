@@ -37,7 +37,6 @@ export class EmailService {
 			requireTLS: true,
 		});
 
-		// Verificar que la configuración SMTP es correcta.
 		this.nodeMailer
 			.verify()
 			.then(() => console.info('La configuración SMTP es correcta'))

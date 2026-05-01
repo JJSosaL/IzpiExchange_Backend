@@ -1,6 +1,7 @@
 {
 	"author": "JJSosaL",
 	"dependencies": {
+		"@aws-sdk/client-s3": "3.1041.0",
 		"@nestjs/common": "11.1.19",
 		"@nestjs/core": "11.1.19",
 		"@nestjs/jwt": "11.0.2",
