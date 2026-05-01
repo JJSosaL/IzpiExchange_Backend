@@ -8,7 +8,8 @@ import {
 import type { Server, Socket } from 'socket.io';
 import { JsonWebTokenService } from '#modules/JsonWebToken/JsonWebToken.service.js';
 import { UsersService } from '#modules/Users/Users.service.js';
-import type { UserRole } from '#schemas/MongoDB/User/User.types.js';
+import type { ProductDocument } from '#root/schemas/MongoDB/Product/Product.types.js';
+import { UserRole } from '#root/schemas/MongoDB/User/User.types.js';
 
 @WebSocketGateway({
 	cors: {
@@ -26,18 +27,19 @@ export class RealTimeGateway implements OnGatewayConnection {
 		@Inject(UsersService) private readonly usersService: UsersService,
 	) {}
 
-	broadcast<GatewayEvent extends GatewayEventName>(
-		event: GatewayEvent,
-		payload: unknown,
-		role?: UserRole,
-	): void {
+	private getRoomName(userRole: UserRole): string {
+		const roomNames: Record<UserRole, string> = {
+			[UserRole.Manager]: 'room:managers',
+			[UserRole.Normal]: 'room:users',
+		};
+
+		return roomNames[userRole];
+	}
+
+	public emitProductPublished(product: ProductDocument): void {
 		const { server } = this;
 
-		if (role) {
-			return void server.to(`role:${role}`).emit(event, payload);
-		}
-
-		server.emit(event, payload);
+		server.emit(GatewayEventName.ProductPublished, product);
 	}
 
 	async handleConnection(@ConnectedSocket() client: Socket) {
@@ -72,7 +74,7 @@ export class RealTimeGateway implements OnGatewayConnection {
 		const { role } = userDocument;
 
 		client.data.user = userDocument;
-		client.join(`role:${role}`);
+		client.join(this.getRoomName(role));
 
 		console.log(`Un nuevo cliente ha sido conectado: ${id}`);
 	}
