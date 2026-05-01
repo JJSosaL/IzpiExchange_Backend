@@ -21,7 +21,8 @@ export class RealTimeGateway implements OnGatewayConnection {
 	public declare readonly server: Server;
 
 	public constructor(
-		@Inject(JsonWebTokenService) private readonly jsonWebTokenService: JsonWebTokenService,
+		@Inject(JsonWebTokenService)
+		private readonly jsonWebTokenService: JsonWebTokenService,
 		@Inject(UsersService) private readonly usersService: UsersService,
 	) {}
 
@@ -42,23 +43,29 @@ export class RealTimeGateway implements OnGatewayConnection {
 	async handleConnection(@ConnectedSocket() client: Socket) {
 		const { handshake, id } = client;
 		const { auth } = handshake;
+		const { accessToken } = auth;
 
 		console.log(`Gestionando cliente entrante: ${id}`);
 
-		const { accessToken } = auth;
-
 		if (!accessToken) {
-			return client.emit(GatewayEventName.AuthenticationFailed, null, () =>
-				client.disconnect(true),
+			return client.emit(
+				GatewayEventName.AuthenticationFailed,
+				null,
+				() => client.disconnect(true),
 			);
 		}
 
-		const userId = await this.jsonWebTokenService.verify(accessToken, false);
+		const userId = await this.jsonWebTokenService.verify(
+			accessToken,
+			false,
+		);
 		const userDocument = await this.usersService.getUser(userId ?? '');
 
 		if (!userDocument) {
-			return client.emit(GatewayEventName.AuthenticationFailed, null, () =>
-				client.disconnect(true),
+			return client.emit(
+				GatewayEventName.AuthenticationFailed,
+				null,
+				() => client.disconnect(true),
 			);
 		}
 
