@@ -99,6 +99,7 @@ export class AuthController {
 	}
 
 	@Post('verify-otp')
+	@HttpCode(HttpStatus.OK)
 	protected async verifySignUpOtp(
 		@Body(new ZodValidationPipe(VerifyOneTimePasswordSchema))
 		verifyOtpData: VerifyOneTimePasswordDto,
