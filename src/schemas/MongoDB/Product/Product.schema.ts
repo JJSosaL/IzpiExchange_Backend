@@ -20,6 +20,14 @@ export class Product {
 
 	@Prop({
 		required: true,
+		type: [
+			String,
+		],
+	})
+	declare images: string[];
+
+	@Prop({
+		required: true,
 		type: String,
 	})
 	declare name: string;
