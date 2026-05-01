@@ -1,6 +1,5 @@
 import { type CanActivate, type ExecutionContext, Inject, Injectable } from '@nestjs/common';
 import type { Request } from 'express';
-import { UNAUTHORIZED_RESPONSE } from '#lib/Responses/Shared.js';
 import { JsonWebTokenService } from '#modules/JsonWebToken/JsonWebToken.service.js';
 import { UsersService } from '#modules/Users/Users.service.js';
 
@@ -16,11 +15,7 @@ export class AuthGuard implements CanActivate {
 		const httpRequest = httpContext.getRequest<Request>();
 
 		const userId = await this.jsonWebTokenService.verify(httpRequest, true);
-		const userDocument = await this.usersService.get(userId);
-
-		if (!userDocument) {
-			throw UNAUTHORIZED_RESPONSE();
-		}
+		const userDocument = await this.usersService.getUser(userId, true);
 
 		/*
 		 * Asignar el documento del usuario a la petición para después acceder a

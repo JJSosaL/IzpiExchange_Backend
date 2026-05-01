@@ -54,7 +54,7 @@ export class RealTimeGateway implements OnGatewayConnection {
 		}
 
 		const userId = await this.jsonWebTokenService.verify(accessToken, false);
-		const userDocument = await this.usersService.get(userId ?? '');
+		const userDocument = await this.usersService.getUser(userId ?? '');
 
 		if (!userDocument) {
 			return client.emit(GatewayEventName.AuthenticationFailed, null, () =>
