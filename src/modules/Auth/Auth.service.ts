@@ -27,10 +27,16 @@ export class AuthService {
 	): Promise<string> {
 		const { action, email } = options;
 
-		const otpCodeInteger = randomInt(AuthService.OTP_MIN_LENGTH, AuthService.OTP_MAX_LENGTH);
+		const otpCodeInteger = randomInt(
+			AuthService.OTP_MIN_LENGTH,
+			AuthService.OTP_MAX_LENGTH,
+		);
 		const otpCode = otpCodeInteger.toString();
 
-		const otpExpiration = dayjs().add(AuthService.OTP_EXPIRATION_MINUTES, 'minutes');
+		const otpExpiration = dayjs().add(
+			AuthService.OTP_EXPIRATION_MINUTES,
+			'minutes',
+		);
 		const otpExpirationDate = otpExpiration.toDate();
 
 		await this.oneTimePasswordModel.create({
@@ -48,13 +54,14 @@ export class AuthService {
 	): Promise<OneTimePasswordDocument> {
 		const { action, otpCode } = options;
 
-		const oneTimePasswordDocument = await this.oneTimePasswordModel.findOneAndDelete({
-			action,
-			expiresIn: {
-				$gt: new Date(),
-			},
-			otpCode,
-		});
+		const oneTimePasswordDocument =
+			await this.oneTimePasswordModel.findOneAndDelete({
+				action,
+				expiresIn: {
+					$gt: new Date(),
+				},
+				otpCode,
+			});
 
 		if (!oneTimePasswordDocument) {
 			throw NOT_FOUND_RESPONSE();

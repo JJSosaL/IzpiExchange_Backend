@@ -1,5 +1,12 @@
 import { randomUUID } from 'node:crypto';
-import { Body, Controller, HttpCode, HttpStatus, Inject, Post } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	HttpCode,
+	HttpStatus,
+	Inject,
+	Post,
+} from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import type { Connection, Model } from 'mongoose';
 import { match } from 'ts-pattern';
@@ -35,18 +42,17 @@ export class AuthController {
 
 		@Inject(AuthService) private readonly authService: AuthService,
 		@Inject(EmailService) private readonly emailService: EmailService,
-		@Inject(JsonWebTokenService) private readonly jsonWebTokenService: JsonWebTokenService,
+		@Inject(JsonWebTokenService)
+		private readonly jsonWebTokenService: JsonWebTokenService,
 	) {}
 
 	@Post('sign-in')
 	@HttpCode(HttpStatus.ACCEPTED)
-	protected async handleSignIn(@Body(new ZodValidationPipe(SignInSchema)) signInData: SignInDto) {
+	protected async handleSignIn(
+		@Body(new ZodValidationPipe(SignInSchema)) signInData: SignInDto,
+	) {
 		const { email } = signInData;
 
-		/*
-		 * Validar que el correo electrónico proviene de un dominio permitido.
-		 * En caso contrario, se lanzará una instancia de 'HttpException'.
-		 */
 		const isValidEmailDomain = this.emailService.isValidEmailDomain(email);
 
 		if (!isValidEmailDomain) {
@@ -70,13 +76,11 @@ export class AuthController {
 
 	@Post('sign-up')
 	@HttpCode(HttpStatus.ACCEPTED)
-	protected async handleSignUp(@Body(new ZodValidationPipe(SignUpSchema)) signUpData: SignUpDto) {
+	protected async handleSignUp(
+		@Body(new ZodValidationPipe(SignUpSchema)) signUpData: SignUpDto,
+	) {
 		const { email } = signUpData;
 
-		/*
-		 * Validar que el correo electrónico proviene de un dominio permitido.
-		 * En caso contrario, se lanzará una instancia de 'HttpException'.
-		 */
 		const isValidEmailDomain = this.emailService.isValidEmailDomain(email);
 
 		if (!isValidEmailDomain) {
@@ -106,10 +110,11 @@ export class AuthController {
 	) {
 		const { action, otpCode } = verifyOtpData;
 
-		const oneTimePasswordDocument = await this.authService.getOneTimePassword({
-			action,
-			otpCode,
-		});
+		const oneTimePasswordDocument =
+			await this.authService.getOneTimePassword({
+				action,
+				otpCode,
+			});
 
 		const { email } = oneTimePasswordDocument;
 
