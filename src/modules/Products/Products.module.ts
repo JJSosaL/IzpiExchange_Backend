@@ -3,12 +3,19 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { JsonWebTokenModule } from '#modules/JsonWebToken/JsonWebToken.module.js';
 import { RealTimeModule } from '#modules/RealTime/RealTime.module.js';
 import { UsersModule } from '#modules/Users/Users.module.js';
-import { Product, ProductSchema } from '#root/schemas/MongoDB/Product/Product.schema.js';
+import {
+	Product,
+	ProductSchema,
+} from '#root/schemas/MongoDB/Product/Product.schema.js';
 import { ProductsController } from './Products.controller.js';
+import { ProductsService } from './Products.service.js';
 
 @Module({
 	controllers: [
 		ProductsController,
+	],
+	exports: [
+		ProductsService,
 	],
 	imports: [
 		JsonWebTokenModule,
@@ -20,6 +27,9 @@ import { ProductsController } from './Products.controller.js';
 		]),
 		RealTimeModule,
 		UsersModule,
+	],
+	providers: [
+		ProductsService,
 	],
 })
 export class ProductsModule {}
