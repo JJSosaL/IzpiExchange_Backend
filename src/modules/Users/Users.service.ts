@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { match, P } from 'ts-pattern';
 import { UNAUTHORIZED_RESPONSE } from '#lib/Responses/Shared.js';
 import { User } from '#schemas/MongoDB/User/User.schema.js';
 import type { UserDocument, UserModel } from '#schemas/MongoDB/User/User.types.js';
@@ -43,14 +44,15 @@ export class UsersService {
 			id: userId,
 		});
 
-		if (userDocument) {
-			if (throwUnauthorized) {
-				throw UNAUTHORIZED_RESPONSE();
-			}
+		return match(userDocument)
+			.returnType<UserDocument | null>()
+			.with(P.nullish, () => {
+				if (throwUnauthorized) {
+					throw UNAUTHORIZED_RESPONSE();
+				}
 
-			return null;
-		}
-
-		return userDocument;
+				return null;
+			})
+			.otherwise((userDocument) => userDocument);
 	}
 }
