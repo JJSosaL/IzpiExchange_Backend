@@ -46,7 +46,9 @@ export const UNPROCESSABLE_ENTITY_RESPONSE = (): HttpException =>
 		statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
 	});
 
-export const ZOD_VALIDATION_ERROR_RESPONSE = (zodIssueMessage: string): HttpException =>
+export const ZOD_VALIDATION_ERROR_RESPONSE = (
+	zodIssueMessage: string,
+): HttpException =>
 	buildHttpException({
 		data: {
 			code: 'ZOD_VALIDATION_ERROR',

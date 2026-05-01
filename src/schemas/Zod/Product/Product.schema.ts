@@ -1,4 +1,10 @@
-import { coerce, enum as enum_, object, string, type infer as ZodInfer } from 'zod';
+import {
+	coerce,
+	enum as enum_,
+	object,
+	string,
+	type infer as ZodInfer,
+} from 'zod';
 import { ProductStatus } from '#schemas/MongoDB/Product/Product.types.js';
 import { BODY_PAYLOAD_MUST_BE_OBJECT } from '../Shared/Shared.messages.js';
 import {
@@ -24,11 +30,15 @@ export const ProductCreateSchema = object(
 		description: string(PRODUCT_DESCRIPTION_MUST_BE_STRING)
 			.min(
 				PRODUCT_DESCRIPTION_MIN_LENGTH,
-				PRODUCT_DESCRIPTION_MUST_HAVE_MIN_LENGTH(PRODUCT_DESCRIPTION_MIN_LENGTH),
+				PRODUCT_DESCRIPTION_MUST_HAVE_MIN_LENGTH(
+					PRODUCT_DESCRIPTION_MIN_LENGTH,
+				),
 			)
 			.max(
 				PRODUCT_DESCRIPTION_MAX_LENGTH,
-				PRODUCT_DESCRIPTION_MUST_HAVE_MAX_LENGTH(PRODUCT_DESCRIPTION_MAX_LENGTH),
+				PRODUCT_DESCRIPTION_MUST_HAVE_MAX_LENGTH(
+					PRODUCT_DESCRIPTION_MAX_LENGTH,
+				),
 			),
 		name: string(PRODUCT_NAME_MUST_BE_STRING)
 			.min(
