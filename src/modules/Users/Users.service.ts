@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { UNAUTHORIZED_RESPONSE } from '#lib/Responses/Shared.js';
 import { User } from '#schemas/MongoDB/User/User.schema.js';
 import type { UserDocument, UserModel } from '#schemas/MongoDB/User/User.types.js';
 
@@ -31,9 +32,25 @@ export class UsersService {
 		return await this.updateUserCredits(userId, amount);
 	}
 
-	public async get(id: string): Promise<UserDocument | null> {
-		return await this.usersModel.findOne({
-			id,
+	public async getUser(userId: string, throwUnauthorized?: false): Promise<UserDocument | null>;
+	public async getUser(userId: string, throwUnauthorized: true): Promise<UserDocument>;
+
+	public async getUser(
+		userId: string,
+		throwUnauthorized?: boolean,
+	): Promise<UserDocument | null> {
+		const userDocument = await this.usersModel.findOne({
+			id: userId,
 		});
+
+		if (userDocument) {
+			if (throwUnauthorized) {
+				throw UNAUTHORIZED_RESPONSE();
+			}
+
+			return null;
+		}
+
+		return userDocument;
 	}
 }
