@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import 'multer';
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '#modules/App.module.js';
