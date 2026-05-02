@@ -44,9 +44,6 @@ importers:
       email-addresses:
         specifier: 5.0.0
         version: 5.0.0
-      express:
-        specifier: 5.2.1
-        version: 5.2.1
       handlebars:
         specifier: 4.7.9
         version: 4.7.9
