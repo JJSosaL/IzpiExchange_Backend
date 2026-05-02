@@ -70,3 +70,25 @@ export const MONGO_DB_CONNECTION_URL = getEnvironmentVariable(
 export const MONGO_DB_DATABASE_NAME = getEnvironmentVariable(
 	'MONGO_DB_DATABASE_NAME',
 );
+
+/**
+ * La ID de acceso al servicio de S3 para el 'bucket'.
+ */
+export const S3_ACCESS_ID = getEnvironmentVariable('S3_ACCESS_ID');
+
+/**
+ * El secreto de acceso al servicio de S3 para el 'bucket'.
+ */
+export const S3_ACCESS_SECRET = getEnvironmentVariable('S3_ACCESS_SECRET');
+
+/**
+ * El ID del 'bucket' donde se subirán los archivos.
+ */
+export const S3_BUCKET_ID = getEnvironmentVariable('S3_BUCKET_ID');
+
+/**
+ * La URL pública del 'bucket' donde estarán disponibles los archivos subidos.
+ */
+export const S3_BUCKET_PUBLIC_URL = getEnvironmentVariable(
+	'S3_BUCKET_PUBLIC_URL',
+);
