@@ -48,20 +48,16 @@ export class S3Service {
 			 */
 		};
 
-		Logger.log(`Subiendo archivo a S3: ${objectKey}`);
-
 		try {
 			await this.s3Client.putObject(objectParams, {
 				abortSignal: AbortSignal.timeout(S3Service.MAXIMUM_REQUEST_TIMEOUT),
 			});
 
-			const s3FileUrl = `https://${S3Service.S3_BUCKET_PUBLIC_URL}/${objectKey}`;
-
-			Logger.log(`Archivo subido a S3: ${s3FileUrl}`);
-
-			return s3FileUrl;
+			return `https://${S3Service.S3_BUCKET_PUBLIC_URL}/${objectKey}`;
 		} catch (error) {
-			Logger.error(`Error al subir el archivo a S3: ${error}`);
+			Logger.error({
+				error,
+			});
 
 			throw INTERNAL_SERVER_ERROR_RESPONSE();
 		}
