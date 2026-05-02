@@ -12,7 +12,7 @@ export class S3Service {
 	private static S3_BUCKET_ID = S3_BUCKET_ID;
 	private static S3_BUCKET_PUBLIC_URL = S3_BUCKET_PUBLIC_URL;
 
-	private static MAXIMUM_REQUEST_TIMEOUT = 15_000;
+	private static MAXIMUM_REQUEST_TIMEOUT = 15_000 as const;
 
 	private readonly s3Client: S3;
 
