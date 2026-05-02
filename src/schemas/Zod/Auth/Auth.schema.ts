@@ -1,10 +1,4 @@
-import {
-	email,
-	enum as enum_,
-	object,
-	string,
-	type infer as ZodInfer,
-} from 'zod';
+import { email, enum as enum_, object, string, type infer as ZodInfer } from 'zod';
 import { OneTimePasswordAction } from '#schemas/MongoDB/OneTimePassword/OneTimePassword.types.js';
 import { BODY_PAYLOAD_MUST_BE_OBJECT } from '../Shared/Shared.messages.js';
 import {
@@ -45,6 +39,4 @@ export const VerifyOneTimePasswordSchema = object(
 export type SignInDto = ZodInfer<typeof SignInSchema>;
 export type SignUpDto = ZodInfer<typeof SignUpSchema>;
 
-export type VerifyOneTimePasswordDto = ZodInfer<
-	typeof VerifyOneTimePasswordSchema
->;
+export type VerifyOneTimePasswordDto = ZodInfer<typeof VerifyOneTimePasswordSchema>;

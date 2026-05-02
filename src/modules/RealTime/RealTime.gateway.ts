@@ -1,10 +1,5 @@
 import { Inject, Logger } from '@nestjs/common';
-import {
-	ConnectedSocket,
-	type OnGatewayConnection,
-	WebSocketGateway,
-	WebSocketServer,
-} from '@nestjs/websockets';
+import { ConnectedSocket, type OnGatewayConnection, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import type { Server, Socket } from 'socket.io';
 import { JsonWebTokenService } from '#modules/JsonWebToken/JsonWebToken.service.js';
 import { UsersService } from '#modules/Users/Users.service.js';
@@ -50,35 +45,20 @@ export class RealTimeGateway implements OnGatewayConnection {
 		Logger.log(`Gestionando cliente entrante: ${id}`);
 
 		if (!accessToken) {
-			return client.emit(
-				GatewayEventName.AuthenticationFailed,
-				null,
-				() => {
-					Logger.warn(
-						`Cliente '${id}' desconectado: No contiene un token de acceso`,
-					);
-					client.disconnect(true);
-				},
-			);
+			return client.emit(GatewayEventName.AuthenticationFailed, null, () => {
+				Logger.warn(`Cliente '${id}' desconectado: No contiene un token de acceso`);
+				client.disconnect(true);
+			});
 		}
 
-		const userId = await this.jsonWebTokenService.verify(
-			accessToken,
-			false,
-		);
+		const userId = await this.jsonWebTokenService.verify(accessToken, false);
 		const userDocument = await this.usersService.getUser(userId ?? '');
 
 		if (!userDocument) {
-			return client.emit(
-				GatewayEventName.AuthenticationFailed,
-				null,
-				() => {
-					Logger.warn(
-						`Cliente '${id}' desconectado: No existe el documento del usuario`,
-					);
-					client.disconnect(true);
-				},
-			);
+			return client.emit(GatewayEventName.AuthenticationFailed, null, () => {
+				Logger.warn(`Cliente '${id}' desconectado: No existe el documento del usuario`);
+				client.disconnect(true);
+			});
 		}
 
 		const { role } = userDocument;

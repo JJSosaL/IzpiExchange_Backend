@@ -1,8 +1,6 @@
 import { HttpException, type HttpStatus } from '@nestjs/common';
 
-export function buildHttpException(
-	options: BuildHttpExceptionOptions,
-): HttpException {
+export function buildHttpException(options: BuildHttpExceptionOptions): HttpException {
 	const { data, statusCode } = options;
 
 	return new HttpException(data, statusCode);

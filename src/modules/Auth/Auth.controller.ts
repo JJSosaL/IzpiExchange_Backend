@@ -1,12 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import {
-	Body,
-	Controller,
-	HttpCode,
-	HttpStatus,
-	Inject,
-	Post,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Inject, Post } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import type { Connection, Model } from 'mongoose';
 import { match } from 'ts-pattern';
@@ -48,9 +41,7 @@ export class AuthController {
 
 	@Post('sign-in')
 	@HttpCode(HttpStatus.ACCEPTED)
-	protected async handleSignIn(
-		@Body(new ZodValidationPipe(SignInSchema)) signInData: SignInDto,
-	) {
+	protected async handleSignIn(@Body(new ZodValidationPipe(SignInSchema)) signInData: SignInDto) {
 		const { email } = signInData;
 
 		const isValidEmailDomain = this.emailService.isValidEmailDomain(email);
@@ -76,9 +67,7 @@ export class AuthController {
 
 	@Post('sign-up')
 	@HttpCode(HttpStatus.ACCEPTED)
-	protected async handleSignUp(
-		@Body(new ZodValidationPipe(SignUpSchema)) signUpData: SignUpDto,
-	) {
+	protected async handleSignUp(@Body(new ZodValidationPipe(SignUpSchema)) signUpData: SignUpDto) {
 		const { email } = signUpData;
 
 		const isValidEmailDomain = this.emailService.isValidEmailDomain(email);
@@ -110,11 +99,10 @@ export class AuthController {
 	) {
 		const { action, otpCode } = verifyOtpData;
 
-		const oneTimePasswordDocument =
-			await this.authService.getOneTimePassword({
-				action,
-				otpCode,
-			});
+		const oneTimePasswordDocument = await this.authService.getOneTimePassword({
+			action,
+			otpCode,
+		});
 
 		const { email } = oneTimePasswordDocument;
 

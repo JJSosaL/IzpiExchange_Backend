@@ -6,9 +6,7 @@ import { getEnvironmentVariable } from '#utils/Process/getEnvironmentVariable.js
  * Cualquier correo electrónico que no provenga de este dominio será rechazado
  * al momento de intentar crear una cuenta nueva.
  */
-export const ALLOWED_EMAIL_DOMAIN = getEnvironmentVariable(
-	'ALLOWED_EMAIL_DOMAIN',
-);
+export const ALLOWED_EMAIL_DOMAIN = getEnvironmentVariable('ALLOWED_EMAIL_DOMAIN');
 
 /**
  * El puerto en el que se ejecutará la aplicación de Nest.
@@ -59,17 +57,13 @@ export const JWT_SECRET = getEnvironmentVariable('JWT_SECRET');
  * La URL del servidor de MongoDB donde se guardarán todos los datos de la
  * aplicación.
  */
-export const MONGO_DB_CONNECTION_URL = getEnvironmentVariable(
-	'MONGO_DB_CONNECTION_URL',
-);
+export const MONGO_DB_CONNECTION_URL = getEnvironmentVariable('MONGO_DB_CONNECTION_URL');
 
 /**
  * El nombre de la base de datos de MongoDB donde se guardarán todos los datos
  * de la aplicación.
  */
-export const MONGO_DB_DATABASE_NAME = getEnvironmentVariable(
-	'MONGO_DB_DATABASE_NAME',
-);
+export const MONGO_DB_DATABASE_NAME = getEnvironmentVariable('MONGO_DB_DATABASE_NAME');
 
 /**
  * La ID de acceso al servicio de S3 para el 'bucket'.
@@ -89,6 +83,4 @@ export const S3_BUCKET_ID = getEnvironmentVariable('S3_BUCKET_ID');
 /**
  * La URL pública del 'bucket' donde estarán disponibles los archivos subidos.
  */
-export const S3_BUCKET_PUBLIC_URL = getEnvironmentVariable(
-	'S3_BUCKET_PUBLIC_URL',
-);
+export const S3_BUCKET_PUBLIC_URL = getEnvironmentVariable('S3_BUCKET_PUBLIC_URL');

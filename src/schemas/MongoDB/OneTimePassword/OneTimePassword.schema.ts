@@ -1,8 +1,5 @@
 import { Prop, Schema, SchemaFactory, Virtual } from '@nestjs/mongoose';
-import {
-	OneTimePasswordAction,
-	OneTimePasswordStatus,
-} from './OneTimePassword.types.js';
+import { OneTimePasswordAction, OneTimePasswordStatus } from './OneTimePassword.types.js';
 
 @Schema({
 	timestamps: true,
@@ -51,5 +48,4 @@ export class OneTimePassword {
 	declare status: OneTimePasswordStatus;
 }
 
-export const OneTimePasswordSchema =
-	SchemaFactory.createForClass(OneTimePassword);
+export const OneTimePasswordSchema = SchemaFactory.createForClass(OneTimePassword);

@@ -49,19 +49,10 @@ export class EmailService {
 	): string {
 		const { otpCode } = options;
 
-		const handlebarsTemplatePath = join(
-			cwd(),
-			'templates',
-			templateFileName,
-		);
-		const handlebarsTemplateContent = readFileSync(
-			handlebarsTemplatePath,
-			'utf-8',
-		);
+		const handlebarsTemplatePath = join(cwd(), 'templates', templateFileName);
+		const handlebarsTemplateContent = readFileSync(handlebarsTemplatePath, 'utf-8');
 
-		const handlebarsTemplate = Handlebars.compile(
-			handlebarsTemplateContent,
-		)({
+		const handlebarsTemplate = Handlebars.compile(handlebarsTemplateContent)({
 			otpCode,
 		});
 
@@ -75,14 +66,10 @@ export class EmailService {
 	}
 
 	public parseEmail(email: string): EmailData {
-		const emailData = emailAddresses.parseOneAddress(
-			email,
-		) as ParsedMailbox | null;
+		const emailData = emailAddresses.parseOneAddress(email) as ParsedMailbox | null;
 
 		if (!emailData) {
-			throw new TypeError(
-				`Formato de correo eletrónico no válido: ${email}`,
-			);
+			throw new TypeError(`Formato de correo eletrónico no válido: ${email}`);
 		}
 
 		const { domain, local } = emailData;
@@ -95,10 +82,7 @@ export class EmailService {
 
 	public async sendSignInMail(options: SendSignInMailOptions): Promise<void> {
 		const { recipient } = options;
-		const oneTimePasswordHtml = this.createOneTimePasswordMail(
-			'SignInOneTimePasswordMessage.html',
-			options,
-		);
+		const oneTimePasswordHtml = this.createOneTimePasswordMail('SignInOneTimePasswordMessage.html', options);
 
 		await this.nodeMailer.sendMail({
 			encoding: 'utf-8',
@@ -111,10 +95,7 @@ export class EmailService {
 
 	public async sendSignUpMail(options: SendSignUpMailOptions): Promise<void> {
 		const { recipient } = options;
-		const oneTimePasswordHtml = this.createOneTimePasswordMail(
-			'SignUpOneTimePasswordMessage.html',
-			options,
-		);
+		const oneTimePasswordHtml = this.createOneTimePasswordMail('SignUpOneTimePasswordMessage.html', options);
 
 		await this.nodeMailer.sendMail({
 			encoding: 'utf-8',

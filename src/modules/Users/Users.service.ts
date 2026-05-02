@@ -3,21 +3,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { match, P } from 'ts-pattern';
 import { UNAUTHORIZED_RESPONSE } from '#lib/Responses/Shared.js';
 import { User } from '#schemas/MongoDB/User/User.schema.js';
-import type {
-	UserDocument,
-	UserModel,
-} from '#schemas/MongoDB/User/User.types.js';
+import type { UserDocument, UserModel } from '#schemas/MongoDB/User/User.types.js';
 
 @Injectable()
 export class UsersService {
-	public constructor(
-		@InjectModel(User.name) private readonly usersModel: UserModel,
-	) {}
+	public constructor(@InjectModel(User.name) private readonly usersModel: UserModel) {}
 
-	private async updateUserCredits(
-		userId: string,
-		amount: number,
-	): Promise<boolean> {
+	private async updateUserCredits(userId: string, amount: number): Promise<boolean> {
 		return await this.usersModel
 			.findOneAndUpdate(
 				{
@@ -33,26 +25,14 @@ export class UsersService {
 			.catch(() => false);
 	}
 
-	public async decrementCredits(
-		userId: string,
-		amount: number,
-	): Promise<boolean> {
+	public async decrementCredits(userId: string, amount: number): Promise<boolean> {
 		return await this.updateUserCredits(userId, -amount);
 	}
 
-	public async getUser(
-		userId: string,
-		throwUnauthorized?: false,
-	): Promise<UserDocument | null>;
-	public async getUser(
-		userId: string,
-		throwUnauthorized: true,
-	): Promise<UserDocument>;
+	public async getUser(userId: string, throwUnauthorized?: false): Promise<UserDocument | null>;
+	public async getUser(userId: string, throwUnauthorized: true): Promise<UserDocument>;
 
-	public async getUser(
-		userId: string,
-		throwUnauthorized?: boolean,
-	): Promise<UserDocument | null> {
+	public async getUser(userId: string, throwUnauthorized?: boolean): Promise<UserDocument | null> {
 		const userDocument = await this.usersModel.findOne({
 			id: userId,
 		});
@@ -69,10 +49,7 @@ export class UsersService {
 			.otherwise((userDocument) => userDocument);
 	}
 
-	public async incrementCredits(
-		userId: string,
-		amount: number,
-	): Promise<boolean> {
+	public async incrementCredits(userId: string, amount: number): Promise<boolean> {
 		return await this.updateUserCredits(userId, amount);
 	}
 }

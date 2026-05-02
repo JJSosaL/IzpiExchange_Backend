@@ -7,9 +7,7 @@ import type { JsonWebTokenPayload } from '#lib/Types/JsonWebToken.js';
 
 @Injectable()
 export class JsonWebTokenService {
-	public constructor(
-		@Inject(JwtService) private readonly jwtService: JwtService,
-	) {}
+	public constructor(@Inject(JwtService) private readonly jwtService: JwtService) {}
 
 	private getAccessToken(requestOrAccessToken: Request | string): string {
 		if (typeof requestOrAccessToken === 'string') {
@@ -25,20 +23,11 @@ export class JsonWebTokenService {
 		});
 	}
 
-	public async verify(
-		requestOrAccessToken: Request | string,
-		throwUnauthorized?: false,
-	): Promise<string | null>;
+	public async verify(requestOrAccessToken: Request | string, throwUnauthorized?: false): Promise<string | null>;
 
-	public async verify(
-		requestOrAccessToken: Request | string,
-		throwUnauthorized: true,
-	): Promise<string>;
+	public async verify(requestOrAccessToken: Request | string, throwUnauthorized: true): Promise<string>;
 
-	public async verify(
-		requestOrAccessToken: Request | string,
-		throwUnauthorized?: boolean,
-	): Promise<string | null> {
+	public async verify(requestOrAccessToken: Request | string, throwUnauthorized?: boolean): Promise<string | null> {
 		const accessToken = this.getAccessToken(requestOrAccessToken);
 		const accessTokenPayload = await this.jwtService
 			.verifyAsync<JsonWebTokenPayload>(accessToken)
