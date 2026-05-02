@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { cwd } from 'node:process';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import emailAddresses, { type ParsedMailbox } from 'email-addresses';
 import Handlebars from 'handlebars';
 import { createTransport, type Transporter } from 'nodemailer';
@@ -39,7 +39,7 @@ export class EmailService {
 
 		this.nodeMailer
 			.verify()
-			.then(() => console.info('La configuración SMTP es correcta'))
+			.then(() => Logger.log('La configuración SMTP es correcta'))
 			.catch((error) => console.error(error));
 	}
 

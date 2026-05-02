@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import {
 	ConnectedSocket,
 	type OnGatewayConnection,
@@ -47,13 +47,18 @@ export class RealTimeGateway implements OnGatewayConnection {
 		const { auth } = handshake;
 		const { accessToken } = auth;
 
-		console.log(`Gestionando cliente entrante: ${id}`);
+		Logger.log(`Gestionando cliente entrante: ${id}`);
 
 		if (!accessToken) {
 			return client.emit(
 				GatewayEventName.AuthenticationFailed,
 				null,
-				() => client.disconnect(true),
+				() => {
+					Logger.warn(
+						`Cliente '${id}' desconectado: No contiene un token de acceso`,
+					);
+					client.disconnect(true);
+				},
 			);
 		}
 
@@ -67,7 +72,12 @@ export class RealTimeGateway implements OnGatewayConnection {
 			return client.emit(
 				GatewayEventName.AuthenticationFailed,
 				null,
-				() => client.disconnect(true),
+				() => {
+					Logger.warn(
+						`Cliente '${id}' desconectado: No existe el documento del usuario`,
+					);
+					client.disconnect(true);
+				},
 			);
 		}
 
@@ -76,7 +86,7 @@ export class RealTimeGateway implements OnGatewayConnection {
 		client.data.user = userDocument;
 		client.join(this.getRoomName(role));
 
-		console.log(`Un nuevo cliente ha sido conectado: ${id}`);
+		Logger.log(`Cliente conectado: ${id}`);
 	}
 }
 
