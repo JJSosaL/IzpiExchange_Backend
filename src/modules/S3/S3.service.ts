@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { type PutObjectCommandInput, S3 } from '@aws-sdk/client-s3';
+import { ObjectCannedACL, type PutObjectCommandInput, S3 } from '@aws-sdk/client-s3';
 import { Injectable, Logger } from '@nestjs/common';
 import { INTERNAL_SERVER_ERROR_RESPONSE } from '#lib/Responses/Shared.js';
 import { S3_ACCESS_ID, S3_ACCESS_SECRET, S3_BUCKET_ID, S3_BUCKET_PUBLIC_URL } from '#root/config.js';
@@ -37,7 +37,7 @@ export class S3Service {
 			 * biome-ignore-start lint/style/useNamingConvention: Esta convención
 			 * proviene de un paquete externo que no se puede sobrescribir.
 			 */
-			ACL: 'public-read',
+			ACL: ObjectCannedACL.public_read,
 			Body: buffer,
 			Bucket: S3Service.S3_BUCKET_ID,
 			ContentType: mimetype,
