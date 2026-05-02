@@ -1,20 +1,29 @@
 import { randomUUID } from 'node:crypto';
-import { Body, Controller, Get, Inject, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import {
+	Body,
+	Controller,
+	FileTypeValidator,
+	Get,
+	Inject,
+	MaxFileSizeValidator,
+	Param,
+	ParseFilePipe,
+	Patch,
+	Post,
+	UploadedFiles,
+	UseGuards,
+	UseInterceptors,
+} from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { User } from '#common/Decorators/User.decorator.js';
 import { AuthGuard } from '#common/Guards/Auth.guard.js';
 import { ZodValidationPipe } from '#common/Pipes/ZodValidation.pipe.js';
 import { USER_MUST_HAVE_HIGHER_BALANCE_THAN_PRICE_RESPONSE } from '#lib/Responses/Products.js';
-import {
-	FORBIDDEN_RESPONSE,
-	INTERNAL_SERVER_ERROR_RESPONSE,
-	NOT_FOUND_RESPONSE,
-	UNPROCESSABLE_ENTITY_RESPONSE,
-} from '#lib/Responses/Shared.js';
-import { GatewayEventName, RealTimeGateway } from '#modules/RealTime/RealTime.gateway.js';
+import { FORBIDDEN_RESPONSE, INTERNAL_SERVER_ERROR_RESPONSE, UNPROCESSABLE_ENTITY_RESPONSE } from '#lib/Responses/Shared.js';
+import { RealTimeGateway } from '#modules/RealTime/RealTime.gateway.js';
+import { S3Service } from '#modules/S3/S3.service.js';
 import { UsersService } from '#modules/Users/Users.service.js';
-import { Product } from '#schemas/MongoDB/Product/Product.schema.js';
-import { type ProductModel, ProductStatus } from '#schemas/MongoDB/Product/Product.types.js';
+import { ProductStatus } from '#schemas/MongoDB/Product/Product.types.js';
 import { type UserDocument, UserRole } from '#schemas/MongoDB/User/User.types.js';
 import {
 	type ProductCreateDto,
@@ -22,26 +31,44 @@ import {
 	type ProductStatusUpdateDto,
 	ProductStatusUpdateSchema,
 } from '#schemas/Zod/Product/Product.schema.js';
+import { ProductsService } from './Products.service.js';
 
 @Controller('products')
 @UseGuards(AuthGuard)
 export class ProductsController {
-	public constructor(
-		@InjectModel(Product.name) private readonly productModel: ProductModel,
+	private static MAXIMUM_PRODUCT_FILE_SIZE = 25_000_000 as const; // 25 MB
+	private static MAXIMUM_PRODUCT_FILES_LENGTH = 5 as const;
 
+	public constructor(
+		@Inject(ProductsService) private readonly productsService: ProductsService,
 		@Inject(RealTimeGateway) private readonly realTimeGateway: RealTimeGateway,
+		@Inject(S3Service) private readonly s3Service: S3Service,
 		@Inject(UsersService) private readonly usersService: UsersService,
 	) {}
 
 	@Post()
+	@UseInterceptors(FilesInterceptor('images', ProductsController.MAXIMUM_PRODUCT_FILES_LENGTH))
 	protected async createProduct(
 		@Body(new ZodValidationPipe(ProductCreateSchema)) productCreateData: ProductCreateDto,
 		@User() userDocument: UserDocument,
+		@UploadedFiles(
+			new ParseFilePipe({
+				validators: [
+					new MaxFileSizeValidator({
+						maxSize: ProductsController.MAXIMUM_PRODUCT_FILE_SIZE,
+					}),
+					new FileTypeValidator({
+						fileType: /^image\/(png|jpeg|webp)$/,
+					}),
+				],
+			}),
+		)
+		files: MulterFile[],
 	) {
 		const { description, name, price } = productCreateData;
-		const { credits, id } = userDocument;
+		const { credits: userCredits, id: userId } = userDocument;
 
-		if (price > credits) {
+		if (price > userCredits) {
 			throw USER_MUST_HAVE_HIGHER_BALANCE_THAN_PRICE_RESPONSE();
 		}
 
@@ -52,84 +79,51 @@ export class ProductsController {
 		 * Estos créditos se desbloquearan una vez el publicador haya vendido el
 		 * producto.
 		 */
-		const creditsWereDecremented = await this.usersService.decrementCredits(id, price);
+		const creditsWereDecremented = await this.usersService.decrementCredits(userId, price);
 
 		if (!creditsWereDecremented) {
 			throw INTERNAL_SERVER_ERROR_RESPONSE();
 		}
 
 		const productId = randomUUID();
-		const productDocument = await this.productModel.create({
+
+		const productImagePromises = await Promise.allSettled(files.map((file) => this.s3Service.putObject(productId, file)));
+		const productImages = productImagePromises.filter((promise) => promise.status === 'fulfilled').map(({ value }) => value);
+
+		const productDocument = await this.productsService.createProduct({
 			description,
 			id: productId,
+			images: productImages,
 			name,
 			price,
-			publisherId: id,
+			publisherId: userId,
 		});
 
-		this.realTimeGateway.broadcast(
-			GatewayEventName.ProductCreated,
-			productDocument,
-			UserRole.Manager,
-		);
+		this.realTimeGateway.emitProductCreated(productDocument);
 
 		return productDocument;
 	}
 
 	@Get()
 	protected async getAllProducts() {
-		return await this.productModel
-			.find({
-				status: ProductStatus.Published,
-			})
-			.sort({
-				updatedAt: -1,
-			})
-			.select({
-				__v: false,
-				_id: false,
-			});
+		return await this.productsService.getAllProducts();
 	}
 
 	@Get('own')
 	protected async getOwnProducts(@User() userDocument: UserDocument) {
 		const { id } = userDocument;
 
-		return await this.productModel
-			.find({
-				publisherId: id,
-			})
-			.sort({
-				updatedAt: -1,
-			})
-			.select({
-				__v: false,
-				_id: false,
-			});
+		return await this.productsService.getOwnProducts(id);
 	}
 
 	@Get(':productId')
 	protected async getProduct(@Param('productId') productId: string) {
-		const productDocument = await this.productModel
-			.findOne({
-				id: productId,
-			})
-			.select({
-				__v: false,
-				_id: false,
-			});
-
-		if (!productDocument) {
-			throw NOT_FOUND_RESPONSE();
-		}
-
-		return productDocument;
+		return await this.productsService.getProduct(productId);
 	}
 
 	@Patch(':productId/status')
 	protected async updateProductStatus(
-		@Body(new ZodValidationPipe(ProductStatusUpdateSchema))
-		productStatusUpdateData: ProductStatusUpdateDto,
+		@Body(new ZodValidationPipe(ProductStatusUpdateSchema)) productStatusUpdateData: ProductStatusUpdateDto,
 		@Param('productId') productId: string,
 		@User() userDocument: UserDocument,
 	) {
@@ -144,30 +138,14 @@ export class ProductsController {
 			throw UNPROCESSABLE_ENTITY_RESPONSE();
 		}
 
-		const productDocument = await this.productModel.findOneAndUpdate(
-			{
-				id: productId,
-			},
-			{
-				status,
-			},
-			{
-				projection: {
-					__v: false,
-					_id: false,
-				},
-				returnDocument: 'after',
-			},
-		);
-
-		if (!productDocument) {
-			throw NOT_FOUND_RESPONSE();
-		}
+		const productDocument = await this.productsService.updateProductStatus(productId, status);
 
 		if (status === ProductStatus.Published) {
-			this.realTimeGateway.broadcast(GatewayEventName.ProductPublished, productDocument);
+			this.realTimeGateway.emitProductPublished(productDocument);
 		}
 
 		return productDocument;
 	}
 }
+
+type MulterFile = Express.Multer.File;

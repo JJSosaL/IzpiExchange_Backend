@@ -2,17 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { NOT_FOUND_RESPONSE } from '#lib/Responses/Shared.js';
 import { Product } from '#schemas/MongoDB/Product/Product.schema.js';
-import {
-	type ProductDocument,
-	type ProductModel,
-	ProductStatus,
-} from '#schemas/MongoDB/Product/Product.types.js';
+import { type ProductDocument, type ProductModel, ProductStatus } from '#schemas/MongoDB/Product/Product.types.js';
 
 @Injectable()
 export class ProductsService {
-	public constructor(
-		@InjectModel(Product.name) private readonly productModel: ProductModel,
-	) {}
+	public constructor(@InjectModel(Product.name) private readonly productModel: ProductModel) {}
+
+	public async createProduct(options: CreateProductOptions): Promise<ProductDocument> {
+		const { description, id, images, name, price, publisherId } = options;
+
+		return await this.productModel.create({
+			description,
+			id,
+			images,
+			name,
+			price,
+			publisherId,
+		});
+	}
 
 	public async getAllProducts(): Promise<ProductDocument[]> {
 		return await this.productModel
@@ -59,10 +66,7 @@ export class ProductsService {
 		return productDocument;
 	}
 
-	public async updateProductStatus(
-		productId: string,
-		status: ProductStatus,
-	): Promise<ProductDocument> {
+	public async updateProductStatus(productId: string, status: ProductStatus): Promise<ProductDocument> {
 		const productDocument = await this.productModel.findOneAndUpdate(
 			{
 				id: productId,
@@ -85,4 +89,13 @@ export class ProductsService {
 
 		return productDocument;
 	}
+}
+
+interface CreateProductOptions {
+	description: string;
+	id: string;
+	images: string[];
+	name: string;
+	price: number;
+	publisherId: string;
 }

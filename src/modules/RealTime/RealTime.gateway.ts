@@ -17,8 +17,7 @@ export class RealTimeGateway implements OnGatewayConnection {
 	public declare readonly server: Server;
 
 	public constructor(
-		@Inject(JsonWebTokenService)
-		private readonly jsonWebTokenService: JsonWebTokenService,
+		@Inject(JsonWebTokenService) private readonly jsonWebTokenService: JsonWebTokenService,
 		@Inject(UsersService) private readonly usersService: UsersService,
 	) {}
 
@@ -31,10 +30,14 @@ export class RealTimeGateway implements OnGatewayConnection {
 		return roomNames[userRole];
 	}
 
-	public emitProductPublished(product: ProductDocument): void {
-		const { server } = this;
+	public emitProductCreated(product: ProductDocument): void {
+		const roomName = this.getRoomName(UserRole.Manager);
 
-		server.emit(GatewayEventName.ProductPublished, product);
+		this.server.to(roomName).emit(GatewayEventName.ProductCreated, product);
+	}
+
+	public emitProductPublished(product: ProductDocument): void {
+		this.server.emit(GatewayEventName.ProductPublished, product);
 	}
 
 	async handleConnection(@ConnectedSocket() client: Socket) {
