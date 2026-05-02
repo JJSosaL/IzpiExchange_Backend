@@ -74,6 +74,7 @@ export class EmailService {
 
 	public async sendSignInMail(options: SendSignInMailOptions): Promise<void> {
 		const { recipient } = options;
+
 		const oneTimePasswordHtml = this.createOneTimePasswordMail('SignInOneTimePasswordMessage.html', options);
 
 		await this.nodeMailer.sendMail({
@@ -87,6 +88,7 @@ export class EmailService {
 
 	public async sendSignUpMail(options: SendSignUpMailOptions): Promise<void> {
 		const { recipient } = options;
+
 		const oneTimePasswordHtml = this.createOneTimePasswordMail('SignUpOneTimePasswordMessage.html', options);
 
 		await this.nodeMailer.sendMail({
