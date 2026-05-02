@@ -14,10 +14,7 @@ export class AuthService {
 
 	public static OTP_EXPIRATION_MINUTES = 5 as const;
 
-	public constructor(
-		@InjectModel(OneTimePassword.name)
-		private readonly oneTimePasswordModel: Model<OneTimePassword>,
-	) {}
+	public constructor(@InjectModel(OneTimePassword.name) private readonly oneTimePasswordModel: Model<OneTimePassword>) {}
 
 	public async generateOneTimePasswordCode(options: GenerateOneTimePasswordCodeOptions): Promise<string> {
 		const { action, email } = options;

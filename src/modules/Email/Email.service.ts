@@ -11,6 +11,7 @@ import { ALLOWED_EMAIL_DOMAIN, EMAIL_HOST_NAME, EMAIL_HOST_PORT, EMAIL_USER_NAME
 export class EmailService {
 	private static EMAIL_HOST = EMAIL_HOST_NAME;
 	private static EMAIL_PORT = EMAIL_HOST_PORT;
+
 	private static EMAIL_USER_NAME = EMAIL_USER_NAME;
 	private static EMAIL_USER_TOKEN = EMAIL_USER_TOKEN;
 

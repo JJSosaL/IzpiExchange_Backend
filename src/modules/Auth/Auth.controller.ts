@@ -26,14 +26,12 @@ export class AuthController {
 	public constructor(
 		@InjectConnection() private readonly connection: Connection,
 
-		@InjectModel(OneTimePassword.name)
-		private readonly oneTimePasswordModel: Model<OneTimePassword>,
+		@InjectModel(OneTimePassword.name) private readonly oneTimePasswordModel: Model<OneTimePassword>,
 		@InjectModel(User.name) private readonly userModel: Model<User>,
 
 		@Inject(AuthService) private readonly authService: AuthService,
 		@Inject(EmailService) private readonly emailService: EmailService,
-		@Inject(JsonWebTokenService)
-		private readonly jsonWebTokenService: JsonWebTokenService,
+		@Inject(JsonWebTokenService) private readonly jsonWebTokenService: JsonWebTokenService,
 	) {}
 
 	@Post('sign-in')

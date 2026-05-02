@@ -24,7 +24,6 @@ export class JsonWebTokenService {
 	}
 
 	public async verify(requestOrAccessToken: Request | string, throwUnauthorized?: false): Promise<string | null>;
-
 	public async verify(requestOrAccessToken: Request | string, throwUnauthorized: true): Promise<string>;
 
 	public async verify(requestOrAccessToken: Request | string, throwUnauthorized?: boolean): Promise<string | null> {
