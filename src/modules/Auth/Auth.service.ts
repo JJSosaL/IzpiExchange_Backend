@@ -5,10 +5,7 @@ import dayjs from 'dayjs';
 import type { Model } from 'mongoose';
 import { NOT_FOUND_RESPONSE } from '#lib/Responses/Shared.js';
 import { OneTimePassword } from '#schemas/MongoDB/OneTimePassword/OneTimePassword.schema.js';
-import type {
-	OneTimePasswordAction,
-	OneTimePasswordDocument,
-} from '#schemas/MongoDB/OneTimePassword/OneTimePassword.types.js';
+import type { OneTimePasswordAction, OneTimePasswordDocument } from '#schemas/MongoDB/OneTimePassword/OneTimePassword.types.js';
 
 @Injectable()
 export class AuthService {

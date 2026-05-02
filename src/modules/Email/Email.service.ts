@@ -5,13 +5,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import emailAddresses, { type ParsedMailbox } from 'email-addresses';
 import Handlebars from 'handlebars';
 import { createTransport, type Transporter } from 'nodemailer';
-import {
-	ALLOWED_EMAIL_DOMAIN,
-	EMAIL_HOST_NAME,
-	EMAIL_HOST_PORT,
-	EMAIL_USER_NAME,
-	EMAIL_USER_TOKEN,
-} from '#root/config.js';
+import { ALLOWED_EMAIL_DOMAIN, EMAIL_HOST_NAME, EMAIL_HOST_PORT, EMAIL_USER_NAME, EMAIL_USER_TOKEN } from '#root/config.js';
 
 @Injectable()
 export class EmailService {
@@ -43,10 +37,7 @@ export class EmailService {
 			.catch((error) => console.error(error));
 	}
 
-	private createOneTimePasswordMail(
-		templateFileName: `${string}.html`,
-		options: Pick<CreateOneTimePasswordOptions, 'otpCode'>,
-	): string {
+	private createOneTimePasswordMail(templateFileName: `${string}.html`, options: Pick<CreateOneTimePasswordOptions, 'otpCode'>): string {
 		const { otpCode } = options;
 
 		const handlebarsTemplatePath = join(cwd(), 'templates', templateFileName);

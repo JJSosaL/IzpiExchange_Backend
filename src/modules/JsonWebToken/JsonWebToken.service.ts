@@ -29,9 +29,7 @@ export class JsonWebTokenService {
 
 	public async verify(requestOrAccessToken: Request | string, throwUnauthorized?: boolean): Promise<string | null> {
 		const accessToken = this.getAccessToken(requestOrAccessToken);
-		const accessTokenPayload = await this.jwtService
-			.verifyAsync<JsonWebTokenPayload>(accessToken)
-			.catch(() => null);
+		const accessTokenPayload = await this.jwtService.verifyAsync<JsonWebTokenPayload>(accessToken).catch(() => null);
 
 		return match(accessTokenPayload)
 			.returnType<string | null>()

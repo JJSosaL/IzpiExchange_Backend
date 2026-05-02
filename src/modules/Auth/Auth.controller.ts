@@ -4,10 +4,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import type { Connection, Model } from 'mongoose';
 import { match } from 'ts-pattern';
 import { ZodValidationPipe } from '#common/Pipes/ZodValidation.pipe.js';
-import {
-	ACCOUNT_WITH_SAME_EMAIL_ALREADY_REGISTERED_RESPONSE,
-	EMAIL_DOMAIN_NOT_ALLOWED_RESPONSE,
-} from '#lib/Responses/Auth.js';
+import { ACCOUNT_WITH_SAME_EMAIL_ALREADY_REGISTERED_RESPONSE, EMAIL_DOMAIN_NOT_ALLOWED_RESPONSE } from '#lib/Responses/Auth.js';
 import { NOT_FOUND_RESPONSE } from '#lib/Responses/Shared.js';
 import { EmailService } from '#modules/Email/Email.service.js';
 import { JsonWebTokenService } from '#modules/JsonWebToken/JsonWebToken.service.js';
