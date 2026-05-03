@@ -126,6 +126,17 @@ export class ProductsController {
 		return await this.productsService.getOwnProducts(id);
 	}
 
+	@Get('pending')
+	protected async getPendingProducts(@User() userDocument: UserDocument) {
+		const { role } = userDocument;
+
+		if (role !== UserRole.Manager) {
+			throw FORBIDDEN_RESPONSE();
+		}
+
+		return await this.productsService.getPendingProducts();
+	}
+
 	@Get(':productId')
 	protected async getProduct(@Param('productId') productId: string) {
 		return await this.productsService.getProduct(productId);

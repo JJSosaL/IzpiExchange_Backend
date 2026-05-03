@@ -49,6 +49,20 @@ export class ProductsService {
 			});
 	}
 
+	public async getPendingProducts(): Promise<ProductDocument[]> {
+		return await this.productModel
+			.find({
+				status: ProductStatus.Pending,
+			})
+			.sort({
+				updatedAt: -1,
+			})
+			.select({
+				__v: false,
+				_id: false,
+			});
+	}
+
 	public async getProduct(productId: string): Promise<ProductDocument> {
 		const productDocument = await this.productModel
 			.findOne({
