@@ -4,6 +4,7 @@ import {
 	Controller,
 	FileTypeValidator,
 	Get,
+	HttpStatus,
 	Inject,
 	MaxFileSizeValidator,
 	Param,
@@ -31,6 +32,7 @@ import {
 	type ProductStatusUpdateDto,
 	ProductStatusUpdateSchema,
 } from '#schemas/Zod/Product/Product.schema.js';
+import { buildHttpException } from '#utils/Responses/buildHttpException.js';
 import { ProductsService } from './Products.service.js';
 
 @Controller('products')
@@ -53,6 +55,14 @@ export class ProductsController {
 		@User() userDocument: UserDocument,
 		@UploadedFiles(
 			new ParseFilePipe({
+				exceptionFactory: () =>
+					buildHttpException({
+						data: {
+							code: 'FILES_ARE_REQUIRED',
+							message: 'Se deben subir archivos',
+						},
+						statusCode: HttpStatus.BAD_REQUEST,
+					}),
 				validators: [
 					new MaxFileSizeValidator({
 						maxSize: ProductsController.MAXIMUM_PRODUCT_FILE_SIZE,
