@@ -14,7 +14,7 @@ export const ALLOWED_EMAIL_DOMAIN = getEnvironmentVariable('ALLOWED_EMAIL_DOMAIN
  * NOTA: Si el valor del puerto se modifica, se deberá modificar también el
  * puerto dentro de la aplicación de Flutter en modo desarrollo.
  */
-export const APP_PORT = 3001 as const;
+export const APP_PORT = getEnvironmentVariable('PORT');
 
 /**
  * El nombre del servidor de correo que se utilizará para enviar correos.
